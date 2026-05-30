@@ -1,0 +1,72 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Playfair Display", serif;
+  --color-paper: #09090b;
+  --color-ink: #f4f4f5;
+  --color-gold-accent: #c5a880;
+  --color-sepia-dark: #1c1917;
+  --color-card-bg: rgba(15, 15, 18, 0.85);
+}
+
+@layer base {
+  body {
+    @apply bg-paper text-ink font-sans antialiased selection:bg-gold-accent selection:text-black overflow-x-hidden;
+    background-image: 
+      radial-gradient(circle at 10% 20%, rgba(197, 168, 128, 0.04) 0%, transparent 40%),
+      radial-gradient(circle at 90% 80%, rgba(120, 110, 90, 0.04) 0%, transparent 40%);
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply text-white font-serif tracking-normal;
+  }
+}
+
+/* Custom Scrollbar - Premium Zinc & Accent Gold */
+::-webkit-scrollbar {
+  width: 5px;
+}
+::-webkit-scrollbar-track {
+  background: #09090b;
+}
+::-webkit-scrollbar-thumb {
+  background: #27272a;
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gold-accent);
+}
+
+/* Refined Subtle Grid */
+.bg-cyber-grid {
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.007) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.007) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.bg-dot-grid {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.02) 1.2px, transparent 1.2px);
+  background-size: 24px 24px;
+}
+
+/* Premium Matte Card Styling */
+.cyber-card {
+  background: rgba(18, 18, 22, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(16px);
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
+}
+
+/* Text Gradient Utilities - Luxurious Warm Metallic Gold */
+.text-gradient-purple-cyan {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-neutral-100 via-neutral-300 to-amber-200;
+}
+
+.text-gradient-gold {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-[#e5d4bc] via-[#c5a880] to-[#a4845c];
+}
+
