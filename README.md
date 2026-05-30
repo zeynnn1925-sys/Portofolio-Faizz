@@ -1,20 +1,53 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# 🏆 Muhammad Faiz Dzahin - Professional Portfolio & Dashboard
 
-# Run and deploy your AI Studio app
+Portofolio interaktif mutakhir yang merepresentasikan keahlian administrasi data perkantoran tingkat tinggi (Microsoft Word, Excel, PowerPoint) serta kecakapan teknis *Full-Stack Development* milik **Muhammad Faiz Dzahin**, lulusan terbaik MAS Ma'had Al-Zaytun Angkatan 2025.
 
-This contains everything you need to run your app locally.
+---
 
-View your app in AI Studio: https://ai.studio/apps/75bed7e6-c10a-419e-a24f-d0deed16d269
+## 🛠️ Status Instalasi & Dependensi Terminal
 
-## Run Locally
+**Kabar Baik!** Di lingkungan sandbox Google AI Studio ini, **seluruh modul dan dependensi penting telah terinstal 100% secara otomatis dan berhasil dikompilasi (build sukses)**. Aplikasi saat ini berjalan dengan lancar tanpa ada error.
 
-**Prerequisites:**  Node.js
+Jika Anda mengunduh (*export*) atau mengkloning (*clone*) proyek ini ke komputer lokal Anda, berikut adalah rincian apa saja yang ada di dalam proyek dan bagaimana cara menginstalnya:
 
+### 📦 Daftar Dependensi yang Digunakan (package.json):
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+*   **Framework utama:** `React` & `Vite` (Sangat cepat dan ringan)
+*   **Animasi sinematik:** `framer-motion` & `motion` (Untuk efek transisi premium)
+*   **Ikonografi:** `lucide-react` (Untuk semua aset vektor ikon)
+*   **Desain CSS Utility:** `tailwindcss` & `@tailwindcss/vite` (Gilding estetik berbasis emas hangat & abu-abu gelap matte)
+*   **Sistem helper kelas:** `clsx` & `tailwind-merge` (Untuk penggabungan kelas styling)
+
+---
+
+## 💻 Cara Menjalankan Secara Lokal (Di Komputer Anda)
+
+Jika Anda ingin menjalankan proyek ini di terminal komputer Anda sendiri, ikuti langkah-langkah mudah berikut:
+
+1.  **Clone / Download Folder Proyek**
+2.  **Buka terminal** di dalam folder proyek tersebut.
+3.  **Instal seluruh dependensi** sekaligus dengan menjalankan perintah:
+    ```bash
+    npm install
+    ```
+4.  **Jalankan server pengembangan** (*development server*):
+    ```bash
+    npm run dev
+    ```
+    *Aplikasi akan berjalan secara instan di `http://localhost:3000` atau port default.*
+5.  **Build untuk rilis produksi**:
+    ```bash
+    npm run build
+    ```
+
+---
+
+## ✨ Fitur & Estetika Portofolio yang Telah Dibangun
+
+1.  **Warm Platinum & Gold Satin Theme**: Tipografi mewah mengombinasikan sans-serif modern (*Plus Jakarta Sans*) dengan serif editorial berkelas (*Playfair Display*) serta aksen emas hangat (`#c5a880`) di atas latar belakang abu-abu zinc gelap minimalis.
+2.  **Interactive 3D Perspective Portrait Card**: Foto profil utama Faiz memiliki efek kemiringan (*tilt*) dinamis 3D yang sensitif terhadap pergerakan kursor mouse lengkap dengan efek kilatan cahaya (*lens flare*).
+3.  **Double Golden Squircle Frame**: Di bagian *About*, foto Faiz dibingkai dengan ornamen vektor emas berlapis ganda melengkung murni SVG yang anggun.
+4.  **Executive Experience & Corporate Stewardship**: Deskripsi peran krusial Faiz sebagai Sekretaris Organisasi Pelajar Ma'had Al-Zaytun (OPMAZ) lengkap dengan widget bagan pencapaian parameter data (200+ asrip dokumen, 30+ koordinasi rapat, 100% perizinan tepat waktu).
+5.  **Interactive Hard Skills with Live Doc Preview**: Kartu kompetensi Microsoft Word, Excel, dan PowerPoint interaktif dengan pratinjau dokumen instan bertenaga efek kemiringan 3D.
+6.  **Featured Project - LifeFlow**: Modul interaktif mini mockup aplikasi web *LifeFlow* (sistem manajemen kebiasaan dan penasihat keuangan AI) lengkap dengan panel tiruan interutif yang merefleksikan estetika kelas atas.
+7.  **Sleek Contact Channels**: Akses klik cepat terintegrasi langsung ke WhatsApp Messenger resmi, email bisnis Google Workspace, LinkedIn, dan profil GitHub Faiz dengan animasi mikro hover dinamis.
