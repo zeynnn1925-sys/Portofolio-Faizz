@@ -20,6 +20,7 @@ export default function Navbar() {
     { name: 'Pengalaman', href: '#experience' },
     { name: 'Proyek', href: '#projects' },
     { name: 'Keahlian', href: '#skills' },
+    { name: 'Galeri', href: '#about-gallery' },
     { name: 'Kontak', href: '#contact' },
   ];
 

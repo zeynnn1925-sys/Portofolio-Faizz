@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { BookOpen, GraduationCap, Sparkles } from 'lucide-react';
+import { BookOpen, GraduationCap } from 'lucide-react';
 
 export default function Education() {
   return (
@@ -65,21 +65,6 @@ export default function Education() {
                 Lembaga pendidikan berasrama (boarding school) terkemuka dengan kurikulum komprehensif yang mengintegrasikan disiplin tinggi, keteraturan, tata tertib, organisasi kepeloporan, serta pengayaan wawasan sosiologis global. Pembelajaran intensif ini telah membentuk etos kerja berintegritas tinggi yang dibawanya dalam dunia profesional.
               </p>
             </div>
-          </div>
-
-          {/* Large Score Indicator Widget */}
-          <div className="shrink-0 flex flex-col items-center justify-center p-6 rounded-2xl bg-zinc-900/40 border border-white/5 md:w-56 text-center transform group-hover:scale-[1.01] transition-transform duration-300 shadow-xl">
-            <span className="text-[9px] text-neutral-500 font-mono uppercase tracking-widest font-bold block mb-1">Nilai Rata-Rata Ijazah</span>
-            
-            <div className="flex items-baseline justify-center text-[#c5a880] mb-1 font-display font-semibold">
-              <span className="text-5xl tracking-tighter">88.7</span>
-              <span className="text-lg">0</span>
-            </div>
-
-            <span className="text-[10px] text-neutral-300 font-sans font-medium tracking-wider flex items-center gap-1 uppercase">
-              <Sparkles size={8} className="text-[#eedec9] animate-pulse" />
-              Sangat Memuaskan
-            </span>
           </div>
 
         </motion.div>

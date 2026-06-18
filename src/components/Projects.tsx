@@ -266,20 +266,7 @@ export default function Projects() {
 
               </div>
 
-              {/* Footer Metrics details */}
-              <div className="flex items-center gap-8 pt-4 border-t border-white/5">
-                <div>
-                  <span className="text-[8px] text-neutral-500 font-mono uppercase tracking-widest block mb-0.5">Status Rilis</span>
-                  <div className="flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                    <span className="text-xs font-bold font-mono text-white">Live Production</span>
-                  </div>
-                </div>
-                <div>
-                  <span className="text-[8px] text-neutral-500 font-mono uppercase tracking-widest block mb-0.5">Asisten Terintegrasi</span>
-                  <span className="text-xs font-semibold text-[#c5a880] uppercase tracking-wider">Bertenaga AI Aktif</span>
-                </div>
-              </div>
+
             </div>
 
             {/* Right Side: EXTREMELY STUNNING MINI WEB APP PREVIEW */}

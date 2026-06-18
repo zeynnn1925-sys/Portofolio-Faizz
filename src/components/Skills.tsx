@@ -1,82 +1,70 @@
 import { useState, MouseEvent } from 'react';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import FilePreviewModal from './FilePreviewModal';
-import { ChevronRight, FileText, Sparkles } from 'lucide-react';
+import { 
+  ChevronRight, FileText, FileSpreadsheet, Presentation, Sparkles, 
+  Atom, Code2, Braces, Wind, Database, Terminal, Laptop
+} from 'lucide-react';
 
 export default function Skills() {
   const [previewFile, setPreviewFile] = useState<{ url: string; title: string } | null>(null);
 
   // States to track 3D tilt coordinates relative to card size per card
   const [tiltCoords, setTiltCoords] = useState<Record<number, { rx: number; ry: number; active: boolean }>>({});
+  const [hoveredFramework, setHoveredFramework] = useState<string | null>(null);
 
   const hardSkills = [
     {
       id: 1,
       name: "Microsoft Word",
       sub: "Mail Merge, Auto TOC, Form Dokumen",
-      desc: "Menyusun persuratan massal bertenaga & struktur indeks otomatis.",
+      desc: "Menyusun persuratan massal otomatis & struktur indeks tata naskah perkantoran akademis.",
       proofFile: "/laporan-pekanan-osis.docx",
       colorClass: "hover:border-[#c5a880]/40 hover:shadow-[0_15px_40px_rgba(197,168,128,0.05)] hover:bg-white/[0.01]",
       glowColor: "rgba(197, 168, 128, 0.12)",
-      svg: (
-        <svg className="w-8 h-8 text-[#c5a880]" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-        </svg>
-      )
+      icon: FileText,
+      iconColor: "text-blue-400 group-hover:text-blue-300"
     },
     {
       id: 2,
       name: "Microsoft Excel",
       sub: "VLOOKUP, COUNTIF, IF & Data Validasi",
-      desc: "Analisis komparatif tabular & integrasi validasi data masukan.",
+      desc: "Komparasi pangkalan data tabular, standardisasi entri, serta olah formula aritmatika logis.",
       proofFile: "/presensi-kehadiran.xlsx",
       colorClass: "hover:border-[#c5a880]/40 hover:shadow-[0_15px_40px_rgba(197,168,128,0.05)] hover:bg-white/[0.01]",
       glowColor: "rgba(197, 168, 128, 0.12)",
-      svg: (
-        <svg className="w-8 h-8 text-[#c5a880]" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-        </svg>
-      )
+      icon: FileSpreadsheet,
+      iconColor: "text-emerald-400 group-hover:text-emerald-300"
     },
     {
       id: 3,
-      name: "Microsoft PowerPoint",
-      sub: "Animasi Dinamis, Infografis & Transisi",
-      desc: "Desain presentasi berkelas dengan korelasi visual tinggi.",
+      name: "Microsoft Office",
+      sub: "Animasi Dinamis, Infografis & Adminis",
+      desc: "Standardisasi rancang presentasi korporat serta kolaborasi terpadu antar aplikasi Office.",
       proofFile: "/proposal-gema-alquran.docx",
       colorClass: "hover:border-[#c5a880]/40 hover:shadow-[0_15px_40px_rgba(197,168,128,0.05)] hover:bg-white/[0.01]",
       glowColor: "rgba(197, 168, 128, 0.12)",
-      svg: (
-        <svg className="w-8 h-8 text-[#c5a880]" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M7 12l3-3 3 3 4-4M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-        </svg>
-      )
+      icon: Presentation,
+      iconColor: "text-amber-400 group-hover:text-orange-300"
     },
     {
       id: 4,
-      name: "Prinsip Dasar Web & Code",
-      sub: "HTML, CSS, JS, React & Programming",
-      desc: "Pengembangan web modern yang cepat, aman, dan memuaskan.",
+      name: "Web Programming",
+      sub: "HTML, CSS, JS, React & Frameworks",
+      desc: "Implementasi desain antarmuka web modern dengan arsitektur kode responsif dan terstandardisasi.",
       proofFile: "/laporan-pekanan-osis.docx",
       colorClass: "hover:border-[#eedec9]/40 hover:shadow-[0_15px_40px_rgba(238,222,201,0.05)] hover:bg-white/[0.01]",
       glowColor: "rgba(238, 222, 201, 0.12)",
-      svg: (
-        <svg className="w-8 h-8 text-[#eedec9]" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-        </svg>
-      )
+      icon: Laptop,
+      iconColor: "text-purple-400 group-hover:text-fuchsia-300",
+      frameworks: [
+        { name: "React", icon: Atom, color: "text-[#61dafb] hover:bg-[#61dafb]/10" },
+        { name: "JavaScript", icon: Braces, color: "text-[#f7df1e] hover:bg-[#f7df1e]/10" },
+        { name: "HTML5/CSS3", icon: Code2, color: "text-[#e34f26] hover:bg-[#e34f26]/10" },
+        { name: "Tailwind", icon: Wind, color: "text-[#38bdf8] hover:bg-[#38bdf8]/10" },
+        { name: "Database", icon: Database, color: "text-[#47a248] hover:bg-[#47a248]/10" }
+      ]
     }
-  ];
-
-  const softSkills = [
-    { name: "Komunikasi Baik", description: "Penyampaian gagasan transparan & asertif.", link: "/proposal-gema-alquran.docx" },
-    { name: "Kerja Sama Tim", description: "Sinergi dalam mencapai target bersama.", link: "/proposal-gema-alquran.docx" },
-    { name: "Disiplin & Tanggung Jawab", description: "Integritas penuh pengerjaan tugas surat.", link: "/laporan-pekanan-osis.docx" },
-    { name: "Manajemen Waktu", description: "Efisiensi jadwal rapat dan pelaporan data.", link: "/presensi-kehadiran.xlsx" },
-    { name: "Sosiologi & Adaptif", description: "Mengenali korelasi sosial untuk adaptasi.", link: "/laporan-pekanan-osis.docx" },
-    { name: "Ketelitian Mutlak", description: "Detail orientasi tinggi tanpa kompromi.", link: "/presensi-kehadiran.xlsx" },
-    { name: "Pemecahan Masalah", description: "Solutif menghadapi hambatan struktural.", link: "/proposal-gema-alquran.docx" },
-    { name: "Inovatif Tekno", description: "Berpikir kreatif memakai software modern.", link: "/presensi-kehadiran.xlsx" }
   ];
 
   // Mouse tilt handlers for hard skill cards
@@ -137,19 +125,16 @@ export default function Skills() {
           </p>
         </motion.div>
 
-        {/* 2-Column Grid Layout: Hard Skills (Left) | Soft Skills (Right) */}
-        <div className="grid lg:grid-cols-2 gap-16 items-start">
-          
-          {/* Left Column: 2x2 Hard Skill Cards */}
-          <div>
-            <div className="flex items-center gap-2.5 mb-8 border-b border-white/5 pb-4">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#c5a880]"></span>
-              <h3 className="text-sm font-sans font-medium text-white uppercase tracking-wider">
-                Hard Kompetensi (Aplikasi Cerdas)
-              </h3>
-            </div>
+        {/* Centered Grid Layout: Hard Skills */}
+        <div className="max-w-6xl mx-auto">
+          <div className="flex items-center justify-center gap-2.5 mb-10 border-b border-white/5 pb-4">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#c5a880]"></span>
+            <h3 className="text-sm font-mono font-medium text-white uppercase tracking-wider text-center bg-[#0b0b0b]">
+              Skills
+            </h3>
+          </div>
 
-            <div className="grid sm:grid-cols-2 gap-6">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {hardSkills.map((card, idx) => {
                 const tilt = tiltCoords[card.id] || { rx: 0, ry: 0, active: false };
                 return (
@@ -162,7 +147,7 @@ export default function Skills() {
                     onMouseMove={(e) => handleMouseMoveCard(e, card.id)}
                     onMouseLeave={() => handleMouseLeaveCard(card.id)}
                     onClick={() => setPreviewFile({ url: card.proofFile, title: card.name })}
-                    className={`p-6 flex flex-col justify-between h-72 rounded-2xl relative select-none cursor-pointer transition-all duration-300 ease-out border border-white/5 bg-zinc-950/40 ${card.colorClass}`}
+                    className={`p-6 flex flex-col justify-between min-h-[300px] h-auto rounded-2xl relative select-none cursor-pointer transition-all duration-300 ease-out border border-white/5 bg-zinc-950/40 ${card.colorClass}`}
                     style={{
                       transform: `perspective(800px) rotateX(${tilt.rx}deg) rotateY(${tilt.ry}deg) translateY(${tilt.active ? '-4px' : '0px'})`,
                       transformStyle: 'preserve-3d',
@@ -176,20 +161,63 @@ export default function Skills() {
 
                     {/* Skill Icon */}
                     <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center border border-white/5">
-                      {card.svg}
+                      <card.icon className={`w-6 h-6 ${card.iconColor}`} />
                     </div>
 
                     {/* Metadata */}
-                    <div className="mt-4">
+                    <div className="mt-4 flex-grow flex flex-col justify-center">
                       <span className="text-[9px] text-[#c5a880] font-mono font-semibold tracking-widest uppercase block mb-1">
                         {card.sub}
                       </span>
                       <h4 className="text-md font-display font-medium text-white tracking-wide uppercase mb-2">
                         {card.name}
                       </h4>
-                      <p className="text-xs text-neutral-400 font-light leading-relaxed">
-                        {card.desc}
-                      </p>
+                      
+                      {card.frameworks ? (
+                        <div className="mt-2.5">
+                          <div className="flex flex-wrap gap-2 mb-3">
+                            {card.frameworks.map((fw, fIdx) => {
+                              const FwIcon = fw.icon;
+                              return (
+                                <div
+                                  key={fIdx}
+                                  onMouseEnter={(e) => {
+                                    e.stopPropagation();
+                                    setHoveredFramework(fw.name);
+                                  }}
+                                  onMouseLeave={(e) => {
+                                    e.stopPropagation();
+                                    setHoveredFramework(null);
+                                  }}
+                                  className={`w-9 h-9 rounded-lg bg-white/5 border border-white/5 flex items-center justify-center transition-all duration-300 relative group/fw ${fw.color}`}
+                                  onClick={(e) => e.stopPropagation()} // prevent double trigger
+                                >
+                                  <FwIcon className="w-4.5 h-4.5 transition-transform duration-300 group-hover/fw:scale-110" />
+                                  <AnimatePresence>
+                                    {hoveredFramework === fw.name && (
+                                      <motion.span
+                                        initial={{ opacity: 0, y: 4, scale: 0.95 }}
+                                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                                        exit={{ opacity: 0, y: 4, scale: 0.95 }}
+                                        className="absolute -top-8 px-2 py-0.5 rounded bg-zinc-900 border border-white/10 text-[9px] font-mono text-white whitespace-nowrap z-20 pointer-events-none"
+                                      >
+                                        {fw.name}
+                                      </motion.span>
+                                    )}
+                                  </AnimatePresence>
+                                </div>
+                              );
+                            })}
+                          </div>
+                          <p className="text-[11px] text-neutral-400 font-light leading-relaxed">
+                            {card.desc}
+                          </p>
+                        </div>
+                      ) : (
+                        <p className="text-xs text-neutral-400 font-light leading-relaxed">
+                          {card.desc}
+                        </p>
+                      )}
                     </div>
 
                     {/* Proof badge */}
@@ -204,55 +232,7 @@ export default function Skills() {
               })}
             </div>
           </div>
-
-          {/* Right Column: 2x4 Soft Skill Pills in Grid */}
-          <div>
-            <div className="flex items-center gap-2.5 mb-8 border-b border-white/5 pb-4">
-              <span className="w-1.5 h-1.5 rounded-full bg-neutral-400"></span>
-              <h3 className="text-sm font-sans font-medium text-white uppercase tracking-wider">
-                Soft Kompetensi & Sinergi
-              </h3>
-            </div>
-
-            <div className="grid sm:grid-cols-2 gap-4">
-              {softSkills.map((item, idx) => (
-                <motion.div
-                  key={idx}
-                  initial={{ opacity: 0, y: 25 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-100px" }}
-                  transition={{ duration: 0.5, delay: idx * 0.08 }}
-                  onClick={() => setPreviewFile({ url: item.link, title: item.name })}
-                  className="p-5 rounded-2xl border border-white/5 hover:border-[#c5a880]/30 hover:bg-white/[0.01] bg-zinc-950/40 flex flex-col justify-between transition-all duration-300 relative group cursor-pointer"
-                >
-                  <div className="flex justify-between items-start mb-3">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#c5a880]" />
-                    <span className="text-[9px] text-neutral-500 font-mono tracking-wider uppercase font-semibold">
-                      VERIFIED
-                    </span>
-                  </div>
-
-                  <div>
-                    <h4 className="text-xs sm:text-sm font-medium text-white uppercase tracking-wider group-hover:text-amber-250 transition-colors">
-                      {item.name}
-                    </h4>
-                    <p className="text-[11px] text-neutral-500 font-light mt-1.5 leading-relaxed">
-                      {item.description}
-                    </p>
-                  </div>
-
-                  <div className="mt-4 pt-3 border-t border-white/5 flex items-center justify-between text-[9px] font-mono text-neutral-600 group-hover:text-neutral-400 transition-all">
-                    <span>KLIK LIHAT BUKTI</span>
-                    <FileText size={10} />
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-
         </div>
-
-      </div>
 
       {/* File Preview Modal */}
       <FilePreviewModal 

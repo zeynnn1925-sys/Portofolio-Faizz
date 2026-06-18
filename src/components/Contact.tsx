@@ -153,11 +153,6 @@ export default function Contact() {
             <p className="text-neutral-400 font-sans font-light text-base leading-relaxed mb-10 max-w-lg">
               Faiz selalu antusias membahas ide baru, operasional administrasi cerdas, entri data yang presisi, atau peluang kolaborasi profesional. Gunakan detail di samping untuk berkoordinasi langsung.
             </p>
-
-            <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-xl bg-white/5 border border-white/5 text-xs text-[#c5a880] font-sans font-medium tracking-wide uppercase">
-              <Sparkles size={12} className="text-[#c5a880]" />
-              Komunikasi Resmi & Responsif
-            </div>
           </motion.div>
 
           {/* Right Column: 4 Branded Contact Cards */}

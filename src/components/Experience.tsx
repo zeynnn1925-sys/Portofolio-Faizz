@@ -32,12 +32,6 @@ export default function Experience() {
     }
   ];
 
-  const stats = [
-    { value: "200+", label: "Arsip Surat & Dokumen", sub: "Digital & Fisik Rapi" },
-    { value: "30+", label: "Rapat Terkoordinasi", sub: "Transparan & Efisien" },
-    { value: "100%", label: "Perizinan Selesai", sub: "Tepat Waktu & Akurat" }
-  ];
-
   return (
     <section id="experience" className="py-24 md:py-32 relative bg-cyber-grid bg-[#09090b] overflow-hidden">
       
@@ -122,26 +116,6 @@ export default function Experience() {
                 </div>
               );
             })}
-          </div>
-
-          {/* 3-Column Stats Numbers Row */}
-          <div className="grid sm:grid-cols-3 gap-8">
-            {stats.map((stat, idx) => (
-              <div 
-                key={idx} 
-                className="flex flex-col items-center md:items-start text-center md:text-left p-5 rounded-2xl bg-white/[0.01] border border-transparent hover:border-white/5 hover:bg-white/[0.02] transition-all duration-300"
-              >
-                <span className="text-4xl sm:text-5xl font-display font-semibold text-white group-hover:text-amber-200 transition-colors duration-300">
-                  {stat.value}
-                </span>
-                <span className="text-[10px] text-[#c5a880] font-mono font-bold uppercase tracking-widest mt-1 block">
-                  {stat.label}
-                </span>
-                <span className="text-[10px] text-neutral-500 font-light mt-0.5">
-                  {stat.sub}
-                </span>
-              </div>
-            ))}
           </div>
 
         </motion.div>

@@ -1,7 +1,8 @@
 import { SplineScene } from "@/src/components/ui/splite";
-import { Card } from "@/src/components/ui/card"
-import { Spotlight } from "@/src/components/ui/spotlight"
- 
+import { Card } from "@/src/components/ui/card";
+import { Spotlight } from "@/src/components/ui/spotlight";
+import ScrollCard from "./scroll-card";
+
 export function SplineSceneBasic() {
   return (
     <Card className="w-full h-[500px] bg-black/[0.96] relative overflow-hidden">
@@ -33,3 +34,11 @@ export function SplineSceneBasic() {
     </Card>
   )
 }
+
+export function ComponentDemo() {
+  return (
+    <ScrollCard />
+  );
+}
+
+export { ComponentDemo as DemoOne };
