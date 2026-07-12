@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { useEffect, useState } from 'react';
 import CustomCursor from './components/CustomCursor';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
@@ -13,22 +14,71 @@ import Projects from './components/Projects';
 import Skills from './components/Skills';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
+import NotFound from './components/NotFound';
 
 export default function App() {
+  const [path, setPath] = useState(() => {
+    const pathname = window.location.pathname;
+    if (pathname !== '/' && pathname !== '/index.html' && pathname !== '') {
+      return '404';
+    }
+    if (window.location.hash === '#404') {
+      return '404';
+    }
+    return 'home';
+  });
+
+  useEffect(() => {
+    const handleLocationChange = () => {
+      const pathname = window.location.pathname;
+      const hash = window.location.hash;
+      if (pathname !== '/' && pathname !== '/index.html' && pathname !== '') {
+        setPath('404');
+      } else if (hash === '#404') {
+        setPath('404');
+      } else {
+        setPath('home');
+      }
+    };
+
+    window.addEventListener('popstate', handleLocationChange);
+    window.addEventListener('hashchange', handleLocationChange);
+    
+    // Initial check in case of rendering delay
+    handleLocationChange();
+
+    return () => {
+      window.removeEventListener('popstate', handleLocationChange);
+      window.removeEventListener('hashchange', handleLocationChange);
+    };
+  }, []);
+
+  const handleBackToHome = () => {
+    window.history.pushState({}, '', '/');
+    window.location.hash = '';
+    setPath('home');
+  };
+
   return (
-    <div className="min-h-screen bg-paper select-text selection:bg-cyber-purple selection:text-white">
+    <div className="min-h-screen bg-bone-light select-text selection:bg-amber-clay selection:text-ink-navy">
       <CustomCursor />
-      <Navbar />
-      <main>
-        <Hero />
-        <About />
-        <Education />
-        <Experience />
-        <Projects />
-        <Skills />
-        <Contact />
-      </main>
-      <Footer />
+      {path === 'home' ? (
+        <>
+          <Navbar />
+          <main>
+            <Hero />
+            <About />
+            <Education />
+            <Experience />
+            <Projects />
+            <Skills />
+            <Contact />
+          </main>
+          <Footer />
+        </>
+      ) : (
+        <NotFound onBackToHome={handleBackToHome} />
+      )}
     </div>
   );
 }

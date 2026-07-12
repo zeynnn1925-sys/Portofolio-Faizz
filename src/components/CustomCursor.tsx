@@ -1,14 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 
 export default function CustomCursor() {
-  const dotRef = useRef<HTMLDivElement>(null);
-  const ringRef = useRef<HTMLDivElement>(null);
+  const cursorRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
   const [isHidden, setIsHidden] = useState(true);
 
-  // Position tracks
+  // Position tracking with lerp lag/easing
   const mouseRef = useRef({ x: 0, y: 0 });
-  const ringPosRef = useRef({ x: 0, y: 0 });
+  const cursorPosRef = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
     // Check if touch device
@@ -16,26 +15,26 @@ export default function CustomCursor() {
     if (isTouchDevice) return;
 
     setIsHidden(false);
+    document.documentElement.classList.add('has-custom-cursor');
 
     const handleMouseMove = (e: MouseEvent) => {
       mouseRef.current.x = e.clientX;
       mouseRef.current.y = e.clientY;
-
-      // Instantly position the small dot
-      if (dotRef.current) {
-        dotRef.current.style.transform = `translate3d(${e.clientX - 4}px, ${e.clientY - 4}px, 0)`;
-      }
     };
 
     const handleMouseOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
+      if (!target) return;
+
       if (
         target.tagName === 'A' || 
         target.tagName === 'BUTTON' || 
         target.closest('a') || 
         target.closest('button') || 
         target.closest('.interactive-card') ||
-        target.classList.contains('cursor-pointer')
+        target.closest('[role="button"]') ||
+        target.classList.contains('cursor-pointer') ||
+        target.closest('.cursor-pointer')
       ) {
         setIsHovered(true);
       } else {
@@ -51,54 +50,46 @@ export default function CustomCursor() {
     document.addEventListener('mouseleave', handleMouseLeaveWindow);
     document.addEventListener('mouseenter', handleMouseEnterWindow);
 
-    // Lerp loop for the larger ring
+    // Lerp loop
     let animationFrameId: number;
-    const updateRing = () => {
+    const updateCursor = () => {
       const targetX = mouseRef.current.x;
       const targetY = mouseRef.current.y;
       
-      // Lerp logic
-      ringPosRef.current.x += (targetX - ringPosRef.current.x) * 0.12;
-      ringPosRef.current.y += (targetY - ringPosRef.current.y) * 0.12;
+      // Lerp logic for smooth delay/lag
+      cursorPosRef.current.x += (targetX - cursorPosRef.current.x) * 0.18;
+      cursorPosRef.current.y += (targetY - cursorPosRef.current.y) * 0.18;
 
-      if (ringRef.current) {
-        // Center of the ring is offset
-        const offset = isHovered ? 24 : 16;
-        ringRef.current.style.transform = `translate3d(${ringPosRef.current.x - offset}px, ${ringPosRef.current.y - offset}px, 0)`;
+      if (cursorRef.current) {
+        // Centered using css transform translate3d, with -50% translate classes handled by tailwind
+        cursorRef.current.style.transform = `translate3d(${cursorPosRef.current.x}px, ${cursorPosRef.current.y}px, 0)`;
       }
 
-      animationFrameId = requestAnimationFrame(updateRing);
+      animationFrameId = requestAnimationFrame(updateCursor);
     };
 
-    animationFrameId = requestAnimationFrame(updateRing);
+    animationFrameId = requestAnimationFrame(updateCursor);
 
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseover', handleMouseOver);
       document.removeEventListener('mouseleave', handleMouseLeaveWindow);
       document.removeEventListener('mouseenter', handleMouseEnterWindow);
+      document.documentElement.classList.remove('has-custom-cursor');
       cancelAnimationFrame(animationFrameId);
     };
-  }, [isHovered]);
+  }, []);
 
   if (isHidden) return null;
 
   return (
-    <>
-      {/* Tiny instantly following cursor dot */}
-      <div
-        ref={dotRef}
-        className="fixed top-0 left-0 w-2 h-2 rounded-full pointer-events-none z-[99999] bg-gradient-to-r from-cyber-cyan via-cyber-pink to-cyber-gold transition-transform duration-75 mix-blend-difference"
-      />
-      {/* Larger smooth lerp cursor ring */}
-      <div
-        ref={ringRef}
-        className={`fixed top-0 left-0 rounded-full pointer-events-none z-[99998] border mix-blend-difference transition-all duration-300 ease-out ${
-          isHovered 
-            ? 'w-12 h-12 border-cyber-pink bg-cyber-pink/10 scale-125' 
-            : 'w-8 h-8 border-cyber-cyan bg-transparent'
-        }`}
-      />
-    </>
+    <div
+      ref={cursorRef}
+      className={`fixed top-0 left-0 rounded-full pointer-events-none z-[99999] -translate-x-1/2 -translate-y-1/2 transition-all duration-300 ease-[cubic-bezier(0.175,0.885,0.32,1.275)] ${
+        isHovered
+          ? 'w-10 h-10 border-[1.5px] border-[#E8A855] bg-[#E8A855]/15'
+          : 'w-2.5 h-2.5 bg-[#2F5D5A] border-0'
+      }`}
+    />
   );
 }

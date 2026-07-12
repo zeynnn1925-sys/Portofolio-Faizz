@@ -18,12 +18,10 @@ export default function FilePreviewModal({ isOpen, onClose, fileUrl, title }: Fi
   }, []);
 
   // Construct Google Docs Viewer URL
-  // Ensure no double slashes and handle origin correctly
   const origin = window.location.origin.replace(/\/$/, '');
   const path = fileUrl.startsWith('/') ? fileUrl : `/${fileUrl}`;
   const fullUrl = origin + path;
   
-  // Try to use Google Docs Viewer
   const viewerUrl = `https://docs.google.com/gview?url=${encodeURIComponent(fullUrl)}&embedded=true`;
 
   if (!mounted || typeof document === 'undefined') return null;
@@ -35,76 +33,77 @@ export default function FilePreviewModal({ isOpen, onClose, fileUrl, title }: Fi
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[9999] flex items-center justify-center p-4 md:p-8"
+          className="fixed inset-0 z-[9999] flex items-center justify-center p-4 md:p-8 bg-black/80 backdrop-blur-md"
         >
           <div
             onClick={onClose}
-            className="absolute inset-0 bg-ink/90 backdrop-blur-xl cursor-pointer"
+            className="absolute inset-0 cursor-pointer"
           />
           
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            initial={{ opacity: 0, scale: 0.96, y: 15 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className="relative w-full max-w-6xl h-[85vh] bg-white rounded-[2rem] overflow-hidden shadow-2xl flex flex-col z-10"
+            exit={{ opacity: 0, scale: 0.96, y: 15 }}
+            className="relative w-full max-w-5xl h-[85vh] bg-cream rounded-[28px] overflow-hidden shadow-clay-raised flex flex-col z-10 border border-white p-4"
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-8 py-5 border-b border-ink/5 bg-paper/80 backdrop-blur-md">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 border-b border-black/5 bg-bone-dark/20 rounded-t-[20px] relative">
               <div className="flex flex-col">
-                <h3 className="font-serif font-bold text-xl text-ink leading-tight">{title}</h3>
-                <div className="flex items-center gap-2 mt-1">
-                  <span className="w-2 h-2 rounded-full bg-accent animate-pulse"></span>
-                  <span className="text-xs text-ink/40 font-light uppercase tracking-widest">Pratinjau Dokumen</span>
+                <span className="text-[8px] font-mono uppercase font-black tracking-widest text-amber-clay-dark mb-1 block">// DOSSIER VIEW</span>
+                <h3 className="font-display font-bold text-lg md:text-xl text-ink-navy leading-tight">{title}</h3>
+                <div className="flex items-center gap-2 mt-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-deep-teal animate-pulse"></span>
+                  <span className="text-[9px] text-ink-soft font-mono font-bold uppercase tracking-wider">Status: Pratinjau Dokumen</span>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
                 <a 
                   href={fileUrl} 
                   download 
-                  className="flex items-center gap-2 px-4 py-2 rounded-full bg-ink/5 text-ink/60 hover:bg-accent hover:text-white transition-all text-sm font-medium"
+                  className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-cream border border-white shadow-clay-btn text-ink-navy hover:text-amber-clay-dark transition-all text-xs font-sans font-bold"
                   title="Download File"
                 >
-                  <Download size={18} />
+                  <Download size={13} />
                   <span className="hidden sm:inline">Download</span>
                 </a>
                 <a 
                   href={fileUrl} 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-4 py-2 rounded-full bg-ink/5 text-ink/60 hover:bg-accent hover:text-white transition-all text-sm font-medium"
+                  className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-cream border border-white shadow-clay-btn text-ink-navy hover:text-amber-clay-dark transition-all text-xs font-sans font-bold"
                   title="Buka di Tab Baru"
                 >
-                  <ExternalLink size={18} />
-                  <span className="hidden sm:inline">Buka</span>
+                  <ExternalLink size={13} />
+                  <span className="hidden sm:inline">Buka Tab</span>
                 </a>
-                <div className="w-px h-6 bg-ink/10 mx-1"></div>
+                <div className="w-[1px] h-6 bg-black/10 mx-1"></div>
                 <button 
                   onClick={onClose}
-                  className="p-2 rounded-full hover:bg-ink/5 text-ink/60 hover:text-accent transition-colors"
+                  className="w-8 h-8 rounded-xl bg-cream border border-white shadow-clay-btn text-ink-navy hover:text-red-600 hover:rotate-90 transition-all flex items-center justify-center cursor-pointer"
                 >
-                  <X size={24} />
+                  <X size={15} className="stroke-[2.5]" />
                 </button>
               </div>
             </div>
 
-            {/* Content */}
-            <div className="flex-1 bg-ink/5 relative">
+            {/* Content Container */}
+            <div className="flex-1 bg-bone-dark/10 relative rounded-b-[20px] overflow-hidden border-t border-black/5 mt-4">
               <iframe 
                 src={viewerUrl}
-                className="w-full h-full border-none relative z-20"
+                className="w-full h-full border-none relative z-20 rounded-b-[20px]"
                 title="Document Viewer"
               />
               
               {/* Background Loading/Fallback */}
-              <div className="absolute inset-0 z-10 flex flex-col items-center justify-center text-center p-12 bg-paper/50">
-                <div className="w-16 h-16 border-4 border-accent border-t-transparent rounded-full animate-spin mb-6"></div>
-                <h4 className="text-2xl font-serif font-bold text-ink mb-4">Sedang Memuat Dokumen</h4>
-                <p className="text-ink/60 font-light max-w-md mx-auto mb-8">
-                  Kami sedang menyiapkan pratinjau dokumen Anda. Jika pratinjau tidak muncul dalam beberapa detik, hal ini mungkin disebabkan oleh batasan akses di lingkungan ini.
+              <div className="absolute inset-0 z-10 flex flex-col items-center justify-center text-center p-8 bg-cream/95">
+                <div className="w-12 h-12 border-3 border-deep-teal border-t-transparent rounded-full animate-spin mb-4"></div>
+                <h4 className="text-xl font-display font-bold text-ink-navy mb-2">Memuat Dokumen...</h4>
+                <p className="text-ink-soft font-semibold text-xs max-w-md mx-auto mb-6">
+                  Pratinjau sedang dipersiapkan. Jika pratinjau dokumen tidak kunjung muncul, Anda bisa langsung mengunduh atau membukanya di tab baru melalui kontrol di bawah.
                 </p>
-                <div className="flex flex-wrap justify-center gap-4">
-                  <a href={fileUrl} download className="px-8 py-3 bg-accent text-white rounded-full text-sm font-bold hover:shadow-lg hover:shadow-accent/30 transition-all transform hover:-translate-y-1">Download Sekarang</a>
-                  <a href={fileUrl} target="_blank" rel="noopener noreferrer" className="px-8 py-3 border border-ink/20 text-ink/60 rounded-full text-sm font-bold hover:bg-ink/5 transition-all">Buka di Tab Baru</a>
+                <div className="flex flex-wrap justify-center gap-3">
+                  <a href={fileUrl} download className="px-6 py-2.5 bg-amber-clay text-ink-navy rounded-xl text-xs font-bold font-sans border border-white shadow-clay-btn hover:bg-amber-clay/90 active:scale-95 transition-all">Unduh Sekarang</a>
+                  <a href={fileUrl} target="_blank" rel="noopener noreferrer" className="px-6 py-2.5 bg-cream text-ink-navy rounded-xl text-xs font-bold font-sans border border-white shadow-clay-btn hover:shadow-clay-inset active:scale-95 transition-all">Buka Tab Baru</a>
                 </div>
               </div>
             </div>

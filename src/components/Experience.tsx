@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { Briefcase, Calendar, Clock, ShieldCheck, Database } from 'lucide-react';
+import { Calendar, Clock, ShieldCheck, Database } from 'lucide-react';
 
 export default function Experience() {
   const duties = [
@@ -33,87 +33,93 @@ export default function Experience() {
   ];
 
   return (
-    <section id="experience" className="py-24 md:py-32 relative bg-cyber-grid bg-[#09090b] overflow-hidden">
+    <section id="experience" className="py-24 md:py-32 relative bg-bone-light overflow-hidden">
       
       {/* Background spotlights */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-[20%] right-[-10%] w-[55vw] h-[55vw] rounded-full bg-amber-500/[0.02] blur-[120px]"></div>
-        <div className="absolute bottom-[-10%] left-[-15%] w-[50vw] h-[50vw] rounded-full bg-neutral-400/[0.02] blur-[100px]"></div>
-        <div className="absolute inset-0 bg-dot-grid opacity-15"></div>
+        <div className="absolute top-[30%] right-[-10%] w-[45vw] h-[45vw] rounded-full bg-deep-teal/5 blur-[120px]" />
+        <div className="absolute inset-0 bg-paper-grid opacity-75" />
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
+      <div className="max-w-6xl mx-auto px-6 md:px-12 relative z-10">
         
         {/* Section Heading */}
         <motion.div 
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.6 }}
-          className="mb-16 md:mb-24"
+          transition={{ duration: 0.5, ease: [0.25, 1, 0.5, 1] }}
+          className="mb-16 md:mb-20"
         >
-          <span className="text-xs font-semibold uppercase tracking-widest text-[#c5a880] font-mono block mb-3"># Corporate Stewardship</span>
-          <h2 className="text-4xl md:text-6xl font-display font-semibold text-white tracking-tight">
-            Pengalaman <span className="text-gradient-gold italic font-normal">Kepemimpinan</span>
+          <span className="text-xs font-bold uppercase tracking-widest text-deep-teal font-mono block mb-2">CORPORATE STEWARDSHIP</span>
+          <h2 className="text-3xl md:text-5xl font-display font-medium text-ink-navy tracking-tight">
+            Pengalaman <span className="text-amber-clay-dark italic font-semibold">Kepemimpinan</span>
           </h2>
-          <div className="h-[1px] w-20 bg-gradient-to-r from-[#c5a880] via-[#eedec9] to-transparent mt-4"></div>
+          <div className="h-[3px] w-16 bg-amber-clay rounded-full mt-3"></div>
         </motion.div>
 
-        {/* Experience Single Massive Cinematic Card */}
+        {/* Experience Single Massive Card (Archival Dossier Style) */}
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
+          initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="relative rounded-3xl bg-zinc-950/75 border border-white/5 shadow-2xl p-8 md:p-12 overflow-hidden transition-all duration-500 ease-out hover:border-white/10 group"
+          transition={{ duration: 0.5, ease: [0.25, 1, 0.5, 1], delay: 0.1 }}
+          className="relative rounded-[28px] bg-cream border border-white shadow-clay-raised p-8 md:p-10 overflow-hidden transition-all duration-300 hover:shadow-clay-raised-hover group"
         >
           {/* Header Row */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-10 border-b border-white/5 mb-10">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-8 border-b border-black/5 mb-8 pt-3">
             <div>
-              <span className="text-[10px] text-[#c5a880] font-mono font-bold tracking-widest uppercase block mb-1">STRUKTUR UTAMA</span>
-              <h3 className="text-2xl sm:text-3xl font-display font-medium text-white tracking-tight">
+              <span className="text-[10px] text-amber-clay-dark font-mono font-bold tracking-wider uppercase block mb-1">STRUKTUR UTAMA ORGANISASI</span>
+              <h3 className="text-2xl sm:text-3xl font-display font-bold text-ink-navy tracking-tight">
                 Sekretaris Organisasi
               </h3>
-              <p className="text-sm font-sans text-neutral-400 font-light mt-1 flex items-center gap-2">
-                <span className="font-semibold text-neutral-300">Organisasi Pelajar Ma'had Al-Zaytun (OPMAZ)</span>
+              <p className="text-sm font-sans text-ink-soft font-bold mt-1">
+                Organisasi Pelajar Ma'had Al-Zaytun (OPMAZ)
               </p>
             </div>
 
-            <div className="flex items-center gap-3">
-              <span className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-[#c5a880]">
-                <Calendar size={16} />
+            <div className="flex items-center gap-3 bg-bone-dark/30 border border-black/5 rounded-2xl p-3 shadow-clay-inset shrink-0">
+              <span className="w-9 h-9 rounded-xl bg-cream border border-white flex items-center justify-center text-deep-teal shadow-clay-subtle">
+                <Calendar size={15} />
               </span>
               <div className="flex flex-col">
-                <span className="text-[9px] text-neutral-500 font-mono uppercase font-bold tracking-wider">Masa Pengabdian</span>
-                <span className="text-sm font-bold text-white font-mono">2024 - 2025</span>
+                <span className="text-[8px] text-ink-soft font-mono uppercase font-bold tracking-wider">Masa Pengabdian</span>
+                <span className="text-xs font-bold text-ink-navy font-mono">2024 - 2025</span>
               </div>
             </div>
           </div>
 
           {/* 3-Column Duties Row */}
-          <div className="grid md:grid-cols-3 gap-10 lg:gap-14 pb-12 border-b border-white/5 mb-10">
+          <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
             {duties.map((duty, idx) => {
               const Icon = duty.icon;
               return (
-                <div key={idx} className="flex flex-col gap-5">
-                  <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-lg bg-white/5 border border-white/5 flex items-center justify-center text-[#c5a880] group-hover:bg-[#c5a880]/10 transition-colors">
-                      <Icon size={15} />
+                <motion.div 
+                  key={idx} 
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-50px" }}
+                  transition={{ duration: 0.5, ease: [0.25, 1, 0.5, 1], delay: 0.2 + idx * 0.1 }}
+                  className="flex flex-col gap-4 p-5 rounded-[20px] bg-bone-dark/20 border border-black/5 shadow-clay-inset hover:bg-bone-dark/30 hover:scale-[1.01] transition-all duration-300"
+                >
+                  <div className="flex items-center gap-2.5 border-b border-black/5 pb-2.5">
+                    <div className="w-8 h-8 rounded-lg bg-cream border border-white flex items-center justify-center text-deep-teal shadow-clay-subtle">
+                      <Icon size={14} />
                     </div>
-                    <h4 className="text-md font-display font-medium text-white tracking-wide">
+                    <h4 className="text-sm font-sans font-bold text-ink-navy tracking-wide">
                       {duty.title}
                     </h4>
                   </div>
 
-                  <ul className="space-y-3.5">
+                  <ul className="space-y-3 flex-1">
                     {duty.items.map((item, key) => (
-                      <li key={key} className="flex gap-2.5 items-start text-xs text-neutral-400 font-light leading-relaxed">
-                        <span className="w-1 h-1 rounded-full bg-[#c5a880] mt-2 shrink-0" />
+                      <li key={key} className="flex gap-2 items-start text-xs text-ink-soft font-semibold leading-relaxed">
+                        <span className="w-1.5 h-1.5 rounded-full bg-amber-clay mt-1.5 shrink-0" />
                         <span>{item}</span>
                       </li>
                     ))}
                   </ul>
-                </div>
+                </motion.div>
               );
             })}
           </div>

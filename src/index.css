@@ -1,72 +1,90 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Quicksand:wght@300..700&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Playfair Display", serif;
-  --color-paper: #09090b;
-  --color-ink: #f4f4f5;
-  --color-gold-accent: #c5a880;
-  --color-sepia-dark: #1c1917;
-  --color-card-bg: rgba(15, 15, 18, 0.85);
+  --font-sans: "Quicksand", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Fraunces", serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  --color-bone-light: #F3EFE7;
+  --color-bone-dark: #EAE3D4;
+  --color-amber-clay: #E8A855;
+  --color-amber-clay-dark: #C7862F;
+  --color-deep-teal: #2F5D5A;
+  --color-deep-teal-light: #4C8783;
+  --color-ink-navy: #242B38;
+  --color-ink-soft: #62697A;
+  --color-cream: #FFFDF8;
+
+  --shadow-clay-raised: 8px 8px 16px rgba(36, 43, 56, 0.11), -8px -8px 16px rgba(255, 255, 255, 0.9);
+  --shadow-clay-inset: inset 4px 4px 8px rgba(36, 43, 56, 0.08), inset -4px -4px 8px rgba(255, 255, 255, 0.9);
+  --shadow-clay-subtle: 4px 4px 8px rgba(36, 43, 56, 0.06), -4px -4px 8px rgba(255, 255, 255, 0.9);
+  --shadow-clay-raised-hover: 12px 12px 20px rgba(36, 43, 56, 0.14), -12px -12px 20px rgba(255, 255, 255, 1);
+  --shadow-clay-btn: 5px 5px 10px rgba(36, 43, 56, 0.12), -5px -5px 10px rgba(255, 255, 255, 0.9);
+  --shadow-clay-btn-active: inset 3px 3px 6px rgba(36, 43, 56, 0.15), inset -3px -3px 6px rgba(255, 255, 255, 0.9);
 }
 
 @layer base {
   body {
-    @apply bg-paper text-ink font-sans antialiased selection:bg-gold-accent selection:text-black overflow-x-hidden;
+    @apply bg-bone-light text-ink-navy font-sans antialiased selection:bg-amber-clay selection:text-ink-navy overflow-x-hidden;
     background-image: 
-      radial-gradient(circle at 10% 20%, rgba(197, 168, 128, 0.04) 0%, transparent 40%),
-      radial-gradient(circle at 90% 80%, rgba(120, 110, 90, 0.04) 0%, transparent 40%);
+      radial-gradient(circle at 10% 20%, rgba(232, 168, 85, 0.05) 0%, transparent 50%),
+      radial-gradient(circle at 90% 80%, rgba(47, 93, 90, 0.05) 0%, transparent 50%);
   }
   
   h1, h2, h3, h4, h5, h6 {
-    @apply text-white font-serif tracking-normal;
+    @apply text-ink-navy font-display tracking-tight;
   }
 }
 
-/* Custom Scrollbar - Premium Zinc & Accent Gold */
+/* Custom Scrollbar for Administrative Theme */
 ::-webkit-scrollbar {
-  width: 5px;
+  width: 10px;
 }
 ::-webkit-scrollbar-track {
-  background: #09090b;
+  background: #F3EFE7;
+  box-shadow: inset 2px 2px 5px rgba(36, 43, 56, 0.05);
 }
 ::-webkit-scrollbar-thumb {
-  background: #27272a;
+  background: #EAE3D4;
+  border: 2px solid #F3EFE7;
   border-radius: 99px;
+  box-shadow: 2px 2px 5px rgba(36, 43, 56, 0.05);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-gold-accent);
+  background: #E8A855;
 }
 
-/* Refined Subtle Grid */
-.bg-cyber-grid {
+/* Administrative Paper Background Motif */
+.bg-paper-grid {
   background-image: 
-    linear-gradient(rgba(255, 255, 255, 0.007) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.007) 1px, transparent 1px);
-  background-size: 40px 40px;
-}
-
-.bg-dot-grid {
-  background-image: radial-gradient(rgba(255, 255, 255, 0.02) 1.2px, transparent 1.2px);
+    linear-gradient(rgba(36, 43, 56, 0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(36, 43, 56, 0.015) 1px, transparent 1px);
   background-size: 24px 24px;
 }
 
-/* Premium Matte Card Styling */
-.cyber-card {
-  background: rgba(18, 18, 22, 0.75);
-  border: 1px solid rgba(255, 255, 255, 0.04);
-  backdrop-filter: blur(16px);
-  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
+/* Claymorphic Utility Styles */
+.clay-card-raised {
+  @apply bg-cream rounded-[24px] border border-white/40 shadow-clay-raised transition-all duration-300;
 }
 
-/* Text Gradient Utilities - Luxurious Warm Metallic Gold */
-.text-gradient-purple-cyan {
-  @apply bg-clip-text text-transparent bg-gradient-to-r from-neutral-100 via-neutral-300 to-amber-200;
+.clay-card-inset {
+  @apply bg-bone-dark/20 rounded-[20px] border border-black/5 shadow-clay-inset;
 }
 
-.text-gradient-gold {
-  @apply bg-clip-text text-transparent bg-gradient-to-r from-[#e5d4bc] via-[#c5a880] to-[#a4845c];
+.clay-button-primary {
+  @apply bg-amber-clay hover:bg-amber-clay/90 active:bg-amber-clay text-ink-navy font-semibold px-6 py-3 rounded-[18px] border border-white/50 shadow-clay-btn active:shadow-clay-btn-active active:translate-y-[1px] transition-all duration-200 cursor-pointer text-center inline-flex items-center justify-center gap-2;
 }
+
+.clay-button-secondary {
+  @apply bg-bone-dark hover:bg-bone-dark/80 text-ink-navy font-medium px-5 py-2.5 rounded-[16px] border border-white/60 shadow-clay-btn active:shadow-clay-btn-active active:translate-y-[1px] transition-all duration-200 cursor-pointer text-center inline-flex items-center justify-center gap-2;
+}
+
+@media (min-width: 1024px) {
+  .has-custom-cursor,
+  .has-custom-cursor * {
+    cursor: none !important;
+  }
+}
+
 

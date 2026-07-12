@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Download, MapPin, ChevronRight, Check,
-  Camera, Upload, X, ChevronLeft, ChevronRight as ChevronRightIcon, 
+  Upload, X, ChevronLeft, ChevronRight as ChevronRightIcon, 
   ZoomIn, Eye, Trash2, Image as ImageIcon
 } from 'lucide-react';
 
@@ -23,17 +23,22 @@ export default function About() {
   const [selectedFilter, setSelectedFilter] = useState<'semua' | 'aktivitas' | 'selfie'>('semua');
   const [activePhotoIndex, setActivePhotoIndex] = useState<number | null>(null);
   const fileInputRefs = useRef<{ [key: string]: HTMLInputElement | null }>({});
-  const carouselRef = useRef<HTMLDivElement>(null);
 
-  // Dynamic Image Slots loaded from LocalStorage
+  // Dynamic Image Slots loaded from LocalStorage (only accept user uploads with base64 data URLs)
+  const getStoredImage = (key: string): string => {
+    const stored = localStorage.getItem(key);
+    if (stored && stored.startsWith('data:')) {
+      return stored;
+    }
+    return '';
+  };
+
   const [images, setImages] = useState<{ [key: string]: string }>({
-    gallery_admin: localStorage.getItem('gallery_admin') || '',
-    gallery_studio: localStorage.getItem('gallery_studio') || '',
-    gallery_khotib: localStorage.getItem('gallery_khotib') || '',
-    gallery_belajar: localStorage.getItem('gallery_belajar') || '',
+    gallery_admin: getStoredImage('gallery_admin'),
+    gallery_studio: getStoredImage('gallery_studio'),
+    gallery_khotib: getStoredImage('gallery_khotib'),
+    gallery_belajar: getStoredImage('gallery_belajar'),
   });
-
-
 
   const highlights = [
     "Penguasaan formula tingkat lanjut Microsoft Excel untuk efisiensi",
@@ -150,7 +155,6 @@ export default function About() {
     });
   };
 
-  // Helper action to upload files to LocalStorage as binary data url
   const triggerFileInput = (key: string, e: React.MouseEvent) => {
     e.stopPropagation();
     fileInputRefs.current[key]?.click();
@@ -160,7 +164,6 @@ export default function About() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Up to 10MB input is supported because we will downscale it
     if (file.size > 10 * 1024 * 1024) {
       alert("Ukuran gambar terlalu besar. Silakan pilih gambar di bawah 10MB.");
       return;
@@ -193,11 +196,13 @@ export default function About() {
 
   const handleRemoveImage = (key: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    localStorage.removeItem(key);
-    setImages(prev => ({ ...prev, [key]: '' }));
+    if (confirm("Apakah Anda yakin ingin menghapus foto kustom ini?")) {
+      localStorage.removeItem(key);
+      setImages(prev => ({ ...prev, [key]: '' }));
+    }
   };
 
-  // Keyboard Navigation inside lighbox
+  // Keyboard Navigation inside lightbox
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (activePhotoIndex === null) return;
@@ -223,259 +228,213 @@ export default function About() {
     setActivePhotoIndex((activePhotoIndex - 1 + itemsWithPhotos.length) % itemsWithPhotos.length);
   };
 
-  // Carousel smooth horizontal scroll operations
-  const scrollCarousel = (direction: 'left' | 'right') => {
-    if (!carouselRef.current) return;
-    const container = carouselRef.current;
-    const scrollAmount = container.clientWidth * 0.75; // Scroll 75% of viewport width
-    const targetScroll = container.scrollLeft + (direction === 'left' ? -scrollAmount : scrollAmount);
-    container.scrollTo({
-      left: targetScroll,
-      behavior: 'smooth'
-    });
-  };
-
-  // Scroll to starting origin when active categorization filters are switched
-  useEffect(() => {
-    if (carouselRef.current) {
-      carouselRef.current.scrollTo({ left: 0, behavior: 'auto' });
-    }
-  }, [selectedFilter]);
-
-
-
   return (
-    <section id="about" className="py-24 md:py-32 relative bg-[#09090b]">
+    <section id="about" className="py-24 md:py-32 relative bg-bone-light overflow-hidden">
       
-      {/* Background grids */}
+      {/* Background decoration elements (gentle and light) */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[30%] right-[-10%] w-[45vw] h-[45vw] rounded-full bg-amber-500/[0.015] blur-[150px]"></div>
-        <div className="absolute bottom-[40%] left-[-10%] w-[40vw] h-[40vw] rounded-full bg-neutral-400/[0.015] blur-[120px]"></div>
-        <div className="absolute bottom-[10%] right-[-5%] w-[35vw] h-[35vw] rounded-full bg-pink-500/[0.005] blur-[130px]"></div>
-        <div className="absolute inset-0 bg-dot-grid opacity-15"></div>
+        <div className="absolute top-[20%] right-[-10%] w-[50vw] h-[50vw] rounded-full bg-amber-clay/5 blur-[130px]" />
+        <div className="absolute bottom-[30%] left-[-10%] w-[45vw] h-[45vw] rounded-full bg-deep-teal/5 blur-[120px]" />
+        <div className="absolute inset-0 bg-paper-grid opacity-70" />
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
+      <div className="max-w-6xl mx-auto px-6 md:px-12 relative z-10">
         
-        {/* Section Title */}
+        {/* Section Title with custom display typography */}
         <motion.div 
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.6 }}
-          className="mb-16 md:mb-24"
+          transition={{ duration: 0.5, ease: [0.25, 1, 0.5, 1] }}
+          className="mb-16 md:mb-20"
         >
-          <span className="text-xs font-semibold uppercase tracking-widest text-[#c5a880] font-mono block mb-3"># Profil Singkat & Dokumentasi</span>
-          <h2 className="text-4xl md:text-6xl font-display font-semibold text-white tracking-tight">
-            Tentang <span className="text-gradient-gold italic font-normal">Saya</span>
+          <span className="text-xs font-bold uppercase tracking-widest text-deep-teal font-mono block mb-2">PROFIL SINGKAT & DOKUMENTASI</span>
+          <h2 className="text-3xl md:text-5xl font-display font-medium text-ink-navy tracking-tight">
+            Tentang <span className="text-amber-clay-dark italic font-semibold">Saya</span>
           </h2>
-          <div className="h-[1px] w-20 bg-gradient-to-r from-[#c5a880] via-[#eedec9] to-transparent mt-4"></div>
+          <div className="h-[3px] w-16 bg-amber-clay rounded-full mt-3"></div>
         </motion.div>
 
-        {/* 2-Column Grid: Left: Story & text details, Right: Exquisitely framed image */}
-        <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+        {/* 2-Column Grid: Left Story, Right Profile Card */}
+        <div className="grid lg:grid-cols-12 gap-12 items-center">
           
-          {/* Left Column: Narrative Details */}
-          <div className="lg:col-span-7 flex flex-col gap-8 order-2 lg:order-1">
-            <div className="space-y-6">
-              <h3 className="text-2xl sm:text-3.5xl font-display font-medium text-white tracking-tight leading-tight">
-                Dedikasi, Presisi, dan <span className="text-gradient-gold italic font-normal">Integritas Administratif</span> Organisasi.
+          {/* Left Column: Narrative Details styled as an Index Card */}
+          <motion.div 
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.5, ease: [0.25, 1, 0.5, 1], delay: 0.1 }}
+            className="lg:col-span-7 order-2 lg:order-1"
+          >
+            <div className="clay-card-raised p-6 sm:p-8 space-y-6 relative border border-white bg-cream">
+              
+              {/* Index card top ruling accent */}
+              <div className="absolute top-0 inset-x-0 h-1 bg-deep-teal rounded-t-[24px]"></div>
+              
+              <h3 className="text-xl sm:text-2xl font-display font-semibold text-ink-navy leading-tight">
+                Dedikasi, Presisi, dan <span className="text-amber-clay-dark italic font-semibold">Integritas Administratif</span> Organisasi.
               </h3>
               
-              <p className="text-neutral-400 font-sans font-light text-sm sm:text-base leading-relaxed">
-                Lulusan Madrasah Aliyah Swasta (MAS) Ma’had Al-Zaytun jurusan Ilmu Pengetahuan Sosial angkatan 2025 yang berfokus pada efisiensi dan tata kelola administrasi organisasi. Selama mengemban amanah sebagai Sekretaris Organisasi Pelajar Ma’had Al-Zaytun (OPMAZ), saya bertanggung jawab dalam pengelolaan arsip surat-menyurat, koordinasi operasional harian, serta komunikasi antar divisi secara terstruktur.
-              </p>
+              <div className="space-y-4 text-ink-navy font-sans font-medium text-xs sm:text-sm leading-relaxed">
+                <p>
+                  Lulusan Madrasah Aliyah Swasta (MAS) Ma’had Al-Zaytun jurusan Ilmu Pengetahuan Sosial angkatan 2025 yang berfokus pada efisiensi dan tata kelola administrasi organisasi. Selama mengemban amanah sebagai Sekretaris Organisasi Pelajar Ma’had Al-Zaytun (OPMAZ), saya bertanggung jawab dalam pengelolaan arsip surat-menyurat, koordinasi operasional harian, serta komunikasi antar divisi secara terstruktur.
+                </p>
+                <p>
+                  Saya memiliki kompetensi dalam mengolah data menggunakan Microsoft Excel serta menyusun dokumen presentasi profesional menggunakan Microsoft PowerPoint. Setiap dokumen yang dihasilkan dikerjakan dengan standar kerapian, transparansi, dan akurasi tinggi.
+                </p>
+              </div>
 
-              <p className="text-neutral-400 font-sans font-light text-sm sm:text-base leading-relaxed">
-                Saya memiliki kompetensi dalam mengolah data menggunakan Microsoft Excel serta menyusun dokumen presentasi profesional menggunakan Microsoft PowerPoint. Setiap dokumen yang dihasilkan dikerjakan dengan standar kerapian, transparansi, dan akurasi tinggi.
-              </p>
-
-              {/* Achievements with elegant design details */}
-              <div className="space-y-3.5 pt-2">
+              {/* Achievements: styled like checklist items */}
+              <div className="space-y-3 pt-2">
                 {highlights.map((item, idx) => (
                   <div key={idx} className="flex items-start gap-3">
-                    <span className="w-5 h-5 rounded bg-zinc-900 border border-white/10 flex items-center justify-center text-[#c5a880] mt-0.5 shrink-0">
+                    <span className="w-5 h-5 rounded-[6px] bg-bone-dark/50 border border-black/5 flex items-center justify-center text-deep-teal mt-0.5 shrink-0 shadow-clay-inset">
                       <Check size={11} className="stroke-[3]" />
                     </span>
-                    <span className="text-xs sm:text-sm text-neutral-300 font-sans font-light leading-relaxed">{item}</span>
+                    <span className="text-xs text-ink-soft font-semibold leading-relaxed">{item}</span>
                   </div>
                 ))}
               </div>
-            </div>
 
-            {/* CTA action buttons */}
-            <div className="flex flex-wrap gap-4 items-center pt-2">
-              <a 
-                href="#experience" 
-                className="inline-flex items-center gap-2 bg-neutral-100 hover:bg-[#c5a880] text-zinc-950 px-6 py-3.5 rounded-xl font-bold uppercase tracking-widest text-[10px] transition-all duration-300 transform hover:-translate-y-0.5 cursor-pointer"
-              >
-                <Download size={13} strokeWidth={2.5} />
-                Unduh CV Lengkap
-              </a>
-              
-              <a 
-                href="#contact" 
-                className="text-[10px] uppercase tracking-widest text-neutral-400 hover:text-white font-bold transition-all flex items-center gap-1.5"
-              >
-                Hubungi Saya
-                <ChevronRight size={13} />
-              </a>
+              {/* Action row with tactile buttons */}
+              <div className="flex flex-wrap gap-4 items-center pt-4 border-t border-black/5">
+                <a 
+                  href="#experience" 
+                  className="clay-button-primary text-[10px] uppercase tracking-wider font-bold"
+                >
+                  <Download size={13} strokeWidth={2.5} />
+                  Unduh CV Lengkap
+                </a>
+                
+                <a 
+                  href="#contact" 
+                  className="group text-[10px] uppercase tracking-widest text-deep-teal hover:text-amber-clay-dark font-extrabold transition-all flex items-center gap-1"
+                >
+                  Hubungi Saya
+                  <ChevronRight size={13} className="group-hover:translate-x-0.5 transition-transform" />
+                </a>
+              </div>
             </div>
-          </div>
+          </motion.div>
 
-          {/* Right Column: Golden Gilded Framing showing current profile picture */}
-          <div className="lg:col-span-5 flex items-center justify-center order-1 lg:order-2">
+          {/* Right Column: Profile Picture Card */}
+          <motion.div 
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.5, ease: [0.25, 1, 0.5, 1], delay: 0.2 }}
+            className="lg:col-span-5 flex items-center justify-center order-1 lg:order-2"
+          >
             <motion.div 
               initial={{ opacity: 0, scale: 0.98 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8 }}
-              className="relative w-80 h-80 sm:w-96 sm:h-96 group flex items-center justify-center"
+              className="relative w-72 h-[340px] group flex items-center justify-center"
             >
-              
-              {/* Back ambient warm soft spot */}
-              <div className="absolute inset-4 rounded-full bg-[#c5a880]/10 blur-2xl group-hover:bg-[#c5a880]/15 transition-all duration-500"></div>
-              
-              {/* Golden vector SVG layout with luxurious double border frame (curated vector design) */}
-              <svg viewBox="0 0 400 400" className="w-full h-full drop-shadow-[0_20px_50px_rgba(0,0,0,0.8)] relative z-10 overflow-visible select-none">
-                <defs>
-                  {/* Subtle golden background gradient for outer ring */}
-                  <linearGradient id="gold-stroke" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#a4845c" />
-                    <stop offset="30%" stopColor="#eedec9" />
-                    <stop offset="70%" stopColor="#c5a880" />
-                    <stop offset="100%" stopColor="#82643a" />
-                  </linearGradient>
+              {/* Binder folder-style card wrapper */}
+              <div className="w-full h-full rounded-[28px] bg-cream border border-white p-3.5 shadow-clay-raised relative flex flex-col justify-between">
+                
+                {/* Picture Frame */}
+                <div className="w-full h-[82%] rounded-[18px] overflow-hidden bg-bone-dark/30 shadow-clay-inset relative border border-black/5">
+                  <img 
+                    src={images.gallery_admin || "/Gambar WhatsApp 2024-08-19 pukul 21.43.27_df60a54b.png"}
+                    alt="M. Faiz Dzahin Portrait" 
+                    className="w-full h-full object-cover"
+                    referrerPolicy="no-referrer"
+                  />
+                  <div className="absolute inset-x-0 bottom-0 h-1/5 bg-gradient-to-t from-black/20 to-transparent" />
+                </div>
 
-                  {/* Inner ring gradient */}
-                  <linearGradient id="gold-stroke-inner" x1="100%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stopColor="#e5d4bc" />
-                    <stop offset="50%" stopColor="#a4845c" />
-                    <stop offset="100%" stopColor="#c5a880" />
-                  </linearGradient>
-
-                  {/* Classic squircle custom shape mask for cropping the photo with extreme elegance */}
-                  <clipPath id="squircle-clip-about">
-                    <path d="M 200,60 
-                             C 285,60 340,115 340,200 
-                             C 340,285 285,340 200,340 
-                             C 115,340 60,285 60,200 
-                             C 60,115 115,60 200,60 Z" />
-                  </clipPath>
-                </defs>
-
-                {/* Layer 1: Outer delicate golden squircle frame */}
-                <path 
-                  d="M 200,52 
-                     C 292,52 348,108 348,200 
-                     C 348,292 292,348 200,348 
-                     C 108,348 52,292 52,200 
-                     C 52,108 108,52 200,52 Z"
-                  fill="none"
-                  stroke="url(#gold-stroke)"
-                  strokeWidth="1.5"
-                  className="transition-all duration-500 group-hover:scale-[1.01]"
-                  style={{ transformOrigin: "200px 200px" }}
-                />
-
-                {/* Layer 2: Middle floating dashed marker ring */}
-                <circle
-                  cx="200"
-                  cy="200"
-                  r="158"
-                  fill="none"
-                  stroke="rgba(255, 255, 255, 0.05)"
-                  strokeWidth="1.2"
-                  strokeDasharray="4,8"
-                />
-
-                {/* Layer 3: Inner golden squircle border directly surrounding the image */}
-                <path 
-                  d="M 200,58 
-                     C 287,58 342,113 342,200 
-                     C 342,287 287,342 200,342 
-                     C 113,342 58,287 58,200 
-                     C 58,113 113,58 200,58 Z"
-                  fill="none"
-                  stroke="url(#gold-stroke-inner)"
-                  strokeWidth="2.5"
-                  className="transition-all duration-300 group-hover:opacity-90"
-                  style={{ transformOrigin: "200px 200px" }}
-                />
-
-                {/* Cropped Image inside custom premium shape */}
-                <image
-                  href={images.gallery_admin || "/Gambar WhatsApp 2024-08-19 pukul 21.43.27_df60a54b.png"}
-                  x="56"
-                  y="56"
-                  width="288"
-                  height="288"
-                  preserveAspectRatio="xMidYMid slice"
-                  clipPath="url(#squircle-clip-about)"
-                  className="transition-all duration-[1000ms] ease-out group-hover:scale-105"
-                  style={{ transformOrigin: "200px 200px" }}
-                  referrerPolicy="no-referrer"
-                />
-              </svg>
-
-              {/* Little vector corner marks that frame the overall layout */}
-              <div className="absolute top-2 left-2 w-4 h-4 border-t border-l border-white/20"></div>
-              <div className="absolute top-2 right-2 w-4 h-4 border-t border-r border-white/20"></div>
-              <div className="absolute bottom-2 left-2 w-4 h-4 border-b border-l border-white/20"></div>
-              <div className="absolute bottom-2 right-2 w-4 h-4 border-b border-r border-white/20"></div>
+                {/* Footer labels inside folder card */}
+                <div className="flex justify-between items-center px-1 pt-1.5 border-t border-black/5">
+                  <div className="flex flex-col">
+                    <span className="text-[10px] font-sans font-bold text-ink-navy leading-none">Faiz Dzahin</span>
+                    <span className="text-[7px] font-mono text-ink-soft uppercase tracking-widest mt-0.5 leading-none">Administrative</span>
+                  </div>
+                  <span className="text-[8px] font-mono font-bold text-amber-clay-dark bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">OPMAZ_OFFICIAL</span>
+                </div>
+              </div>
             </motion.div>
-          </div>
+          </motion.div>
 
         </div>
-
-
-
 
         {/* ==================== INTEGRATED REAL PHOTO GALLERY SUB-SECTION ==================== */}
         
         {/* Continuous Divider */}
-        <div id="about-gallery" className="h-[1px] w-full bg-gradient-to-r from-transparent via-white/10 to-transparent my-24 scroll-mt-24" />
+        <div id="about-gallery" className="h-px w-full bg-gradient-to-r from-transparent via-black/10 to-transparent my-24 scroll-mt-24" />
 
         {/* 2-Column Grid Layout for Stacking Cards */}
-        <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-start relative">
+        <div className="grid lg:grid-cols-12 gap-12 items-start relative">
           
           {/* Left Column: Sticky controls & info panel */}
-          <div className="lg:col-span-5 lg:sticky lg:top-28 space-y-8">
-            <div>
-              <span className="text-xs font-semibold uppercase tracking-widest text-[#c5a880] font-mono block mb-3"># Galeri Arsip & Potret</span>
-              <h3 className="text-3xl md:text-5xl font-display font-semibold text-white tracking-tight leading-tight">
-                Koleksi Foto <span className="text-gradient-gold italic font-normal">Aktivitas Saya</span>
+          <motion.div 
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.5, ease: [0.25, 1, 0.5, 1] }}
+            className="lg:col-span-5 lg:sticky lg:top-28 space-y-8"
+          >
+            <div className="space-y-4">
+              <span className="text-xs font-bold uppercase tracking-widest text-deep-teal font-mono block"># GALERI ARSIP & POTRET</span>
+              <h3 className="text-3xl md:text-4xl font-display font-medium text-ink-navy tracking-tight leading-tight">
+                Koleksi Foto <span className="text-amber-clay-dark italic font-semibold">Aktivitas Saya</span>
               </h3>
-              <p className="text-neutral-400 font-sans font-light text-sm mt-4 leading-relaxed">
+              <p className="text-ink-soft font-sans font-medium text-sm leading-relaxed">
                 Lihat foto-foto nyata kegiatan organisasi, amalan mimbar Ma'had Al-Zaytun, perjalanan commuter, dan suku potret saya.
               </p>
-              <p className="text-[#eedec9] font-sans font-light text-xs mt-3 leading-relaxed">
-                Klik slot foto untuk mengganti dengan file foto asli Anda langsung ke browser. Gulir halaman ke bawah untuk melihat tumpukan foto (stacking cards) berikutnya secara mengalir.
-              </p>
+              <div className="bg-bone-dark/30 rounded-xl p-4 border border-black/5 shadow-clay-inset space-y-2">
+                <span className="text-[10px] font-bold text-amber-clay-dark block uppercase">Petunjuk Galeri:</span>
+                <p className="text-[11px] text-ink-navy font-semibold leading-relaxed">
+                  Klik slot foto untuk mengganti dengan file foto asli Anda langsung ke browser. Gulir halaman ke bawah untuk melihat tumpukan foto (stacking cards) berikutnya secara mengalir.
+                </p>
+              </div>
             </div>
 
-            <div className="hidden lg:flex items-center gap-2.5 text-xs text-neutral-500 font-mono">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
-              <span>Gulir ke bawah untuk menumpuk foto 👇</span>
+            {/* Custom Category Filter Tabs as a Binder */}
+            <div className="space-y-3">
+              <span className="text-[10px] font-bold text-ink-soft uppercase tracking-wider block">PILIH KATEGORI FOTO:</span>
+              <div className="inline-flex flex-col p-1.5 bg-bone-dark/30 rounded-[18px] border border-black/5 shadow-clay-inset w-full sm:w-auto min-w-[200px]">
+                {(['semua', 'aktivitas', 'selfie'] as const).map((filter) => {
+                  const isActive = selectedFilter === filter;
+                  return (
+                    <button
+                      key={filter}
+                      onClick={() => setSelectedFilter(filter)}
+                      className={`px-4 py-2 rounded-xl text-xs font-sans font-bold tracking-wide transition-all text-center cursor-pointer ${
+                        isActive 
+                          ? 'text-ink-navy bg-cream shadow-clay-subtle border border-white/50' 
+                          : 'text-ink-soft hover:text-ink-navy'
+                      }`}
+                    >
+                      {filter === 'semua' ? 'Semua Berkas' : filter === 'aktivitas' ? 'Aktivitas Organisasi' : 'Suka Foto / Potret'}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
-          </div>
+
+            <div className="hidden lg:flex items-center gap-2.5 text-[10px] text-ink-soft font-mono font-semibold">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-clay animate-pulse"></span>
+              <span>Gulir ke bawah untuk melihat tumpukan arsip foto 👇</span>
+            </div>
+          </motion.div>
 
           {/* Right Column: Sticky Vertical Stacking Stack */}
-          <div className="lg:col-span-7 space-y-0 relative pb-24">
+          <div className="lg:col-span-7 space-y-4 relative pb-24">
             <AnimatePresence mode="popLayout">
               {filteredItems.map((item, index) => {
                 const imageSrc = getItemImgSrc(item);
-                const isDefaultPhotoUsed = !images[item.localStorageKey] && !!item.defaultSrc;
+                const isCustomPhoto = !!images[item.localStorageKey];
                 const hasActivePhoto = !!imageSrc;
 
-                // Rotations styling mimicking the component card's rotations
+                // Rotations styling to give that "messy archival desk" feel
                 const rotationStyles = [
-                  'rotate-2 hover:rotate-0',
-                  '-rotate-2 hover:rotate-0',
                   'rotate-1 hover:rotate-0',
                   '-rotate-1 hover:rotate-0',
-                  'skew-x-1 hover:skew-x-0',
-                  '-skew-x-1 hover:skew-x-0'
+                  'rotate-2 hover:rotate-0',
+                  '-rotate-2 hover:rotate-0',
                 ];
                 const rotationClass = rotationStyles[index % rotationStyles.length];
 
@@ -484,17 +443,16 @@ export default function About() {
                     key={item.id}
                     className="relative lg:sticky lg:top-28 w-full flex justify-center py-4 lg:py-6"
                     style={{
-                      // Staggered index so the higher items appear with correct depth stack z-index
                       zIndex: index + 10,
                     }}
                   >
                     <motion.div
                       layout
                       id={`about-gallery-slot-${item.id}`}
-                      initial={{ opacity: 0, scale: 0.96 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.96 }}
-                      transition={{ duration: 0.4 }}
+                      initial={{ opacity: 0, y: 24, scale: 0.96 }}
+                      whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                      viewport={{ once: true, margin: "-60px" }}
+                      transition={{ duration: 0.5, ease: [0.25, 1, 0.5, 1], delay: index * 0.1 }}
                       onClick={() => {
                         if (hasActivePhoto) {
                           const idx = itemsWithPhotos.findIndex(activeItem => activeItem.id === item.id);
@@ -503,14 +461,14 @@ export default function About() {
                           }
                         }
                       }}
-                      className={`group relative aspect-[3/4] w-full max-w-[340px] rounded-2xl border bg-zinc-950/95 overflow-hidden cursor-pointer shadow-2xl transition-all duration-400 ${rotationClass} ${
+                      className={`group relative aspect-[3/4] w-full max-w-[330px] rounded-[24px] border bg-cream p-3 shadow-clay-raised hover:shadow-clay-raised-hover transition-all duration-400 ${rotationClass} ${
                         hasActivePhoto 
-                          ? 'border-white/10 hover:border-[#c5a880]/30 hover:shadow-[0_20px_50px_rgba(0,0,0,0.85)]' 
-                          : 'border-dashed border-white/10 hover:border-[#c5a880]/30 bg-zinc-950/40'
+                          ? 'border-white hover:border-amber-clay/40' 
+                          : 'border-dashed border-black/10 hover:border-amber-clay/30 bg-cream/50'
                       }`}
                     >
                       
-                      {/* Hidden Input File Element for Dynamic Local Uploading */}
+                      {/* Hidden Input File Element */}
                       <input 
                         type="file"
                         ref={el => fileInputRefs.current[item.localStorageKey] = el}
@@ -519,88 +477,98 @@ export default function About() {
                         className="hidden"
                       />
 
-                      {/* CASE 1: SLOT HAS ACTIVE PHOTO */}
+                      {/* Photo Content */}
                       {hasActivePhoto ? (
-                        <>
-                          <div className="absolute inset-0 overflow-hidden w-full h-full">
+                        <div className="w-full h-full rounded-[16px] overflow-hidden relative border border-black/5 bg-bone-dark/10 flex flex-col justify-between">
+                          
+                          {/* Image Box */}
+                          <div className="w-full h-full absolute inset-0 z-0">
                             <img
-                              src={imageSrc || undefined}
+                              src={imageSrc}
                               alt={item.title}
                               referrerPolicy="no-referrer"
                               className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-103"
                             />
-                            {/* Ambient shading masking */}
-                            <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-[#09090b] via-black/40 to-transparent transition-opacity duration-300 opacity-90 group-hover:opacity-95" />
-                            <div className="absolute inset-0 bg-[#c5a880]/5 mix-blend-color opacity-0 group-hover:opacity-40 transition-opacity duration-400" />
+                            {/* Ambient dark mask on bottom for readable text */}
+                            <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/80 via-black/30 to-transparent pointer-events-none" />
+                          </div>
+
+                          {/* Hover action bar */}
+                          <div className="absolute top-3 right-3 flex gap-2 z-20">
+                            {isCustomPhoto && (
+                              <button
+                                onClick={(e) => handleRemoveImage(item.localStorageKey, e)}
+                                className="w-8 h-8 rounded-lg bg-red-600 hover:bg-red-700 text-white flex items-center justify-center shadow-lg cursor-pointer transition-transform hover:scale-105"
+                                title="Hapus Foto Kustom"
+                              >
+                                <Trash2 size={13} />
+                              </button>
+                            )}
+                            <button
+                              onClick={(e) => triggerFileInput(item.localStorageKey, e)}
+                              className="w-8 h-8 rounded-lg bg-cream/95 text-ink-navy hover:text-amber-clay-dark flex items-center justify-center shadow-lg border border-white cursor-pointer transition-transform hover:scale-105"
+                              title="Unggah Ulang Foto"
+                            >
+                              <Upload size={13} />
+                            </button>
                           </div>
 
                           {/* Info Overlay Box */}
-                          <div className="absolute inset-0 p-6 flex flex-col justify-end z-10 pointer-events-none">
+                          <div className="absolute inset-0 p-5 flex flex-col justify-end z-10 pointer-events-none text-white">
                             
-                            {/* Category Label */}
-                            <span className="text-[9px] font-mono tracking-widest text-[#c5a880] uppercase mb-2.5 bg-black/55 px-2 py-0.5 rounded border border-white/5 w-fit">
-                              {item.category === 'aktivitas' ? 'Aktivitas Organisasi' : 'Suka Foto / Potret'}
+                            {/* Category Badge */}
+                            <span className="text-[8px] tracking-widest text-amber-clay font-bold uppercase mb-1 w-fit bg-black/60 px-2 py-0.5 rounded border border-white/10">
+                              {item.category === 'aktivitas' ? 'AKTIVITAS ORGANISASI' : 'SUKA FOTO / POTRET'}
                             </span>
 
                             {/* Title text */}
-                            <h4 className="text-lg font-display font-medium text-white mb-1.5 group-hover:text-amber-200 transition-colors">
+                            <h4 className="text-sm font-sans font-bold leading-tight group-hover:text-amber-clay transition-colors">
                               {item.title}
                             </h4>
 
-                            {/* Collapsed Description */}
-                            <p className="text-[11px] text-neutral-400 font-sans font-light leading-relaxed line-clamp-2 md:opacity-0 md:h-0 group-hover:opacity-100 group-hover:h-auto group-hover:mt-1 transition-all duration-500 overflow-hidden">
+                            {/* Expandable description on hover */}
+                            <p className="text-[10px] text-white/80 font-sans font-semibold leading-relaxed mt-1 line-clamp-2">
                               {item.description}
                             </p>
 
-                            {/* Trigger labels (View details indicator) */}
-                            <div className="absolute top-4 right-4 w-9 h-9 rounded-xl border border-white/10 bg-black/50 backdrop-blur-md flex items-center justify-center text-white/70 opacity-0 group-hover:opacity-100 scale-90 group-hover:scale-100 transition-all duration-300">
-                              <Eye size={13} className="stroke-[2.5]" />
+                            {/* View details indicator */}
+                            <div className="absolute bottom-5 right-5 w-8 h-8 rounded-xl border border-white/20 bg-black/60 backdrop-blur-sm flex items-center justify-center text-white opacity-0 group-hover:opacity-100 scale-90 group-hover:scale-100 transition-all duration-300">
+                              <Eye size={12} className="stroke-[2.5]" />
                             </div>
                           </div>
 
-
-                        </>
+                        </div>
                       ) : (
                         
-                        // CASE 2: EMPTY SLOT REQUIRING USER FILE UPLOAD
+                        // EMPTY SLOT REQUIRING USER FILE UPLOAD
                         <div 
                           onClick={(e) => triggerFileInput(item.localStorageKey, e)}
-                          className="absolute inset-0 p-6 flex flex-col items-center justify-center text-center z-10 transition-colors group-hover:bg-[#c5a880]/[0.02]"
+                          className="w-full h-full rounded-[16px] border border-dashed border-black/10 bg-bone-dark/20 flex flex-col items-center justify-center text-center p-6 cursor-pointer hover:bg-bone-dark/40 transition-colors relative"
                         >
-                          <div className="w-12 h-12 rounded-2xl border border-dashed border-white/10 bg-zinc-950 flex items-center justify-center text-neutral-500 group-hover:text-[#c5a880] group-hover:border-[#c5a880]/40 group-hover:bg-zinc-900/60 transition-all duration-300 mb-4">
-                            <Upload size={18} className="stroke-[1.5]" />
+                          <div className="w-11 h-11 rounded-2xl bg-cream flex items-center justify-center text-deep-teal border border-white shadow-clay-subtle group-hover:text-amber-clay-dark group-hover:scale-105 transition-all duration-300 mb-3">
+                            <Upload size={16} />
                           </div>
-
-                          <span className="text-[10px] font-mono uppercase tracking-widest text-[#c5a880]/60 mb-1.5 block">
-                            Slot: {item.detailsLabel}
-                          </span>
                           
-                          <h4 className="text-sm font-sans font-medium text-neutral-300 px-4 mb-2 group-hover:text-white transition-colors">
+                          <h4 className="text-xs font-sans font-bold text-ink-navy mb-1.5">
                             {item.title}
                           </h4>
 
-                          <p className="text-[11px] text-neutral-500 max-w-xs px-6 font-light leading-relaxed">
-                            {item.placeholderLabel}. Foto asli Anda akan aman tersimpan lokal di browser.
+                          <p className="text-[10px] text-ink-soft max-w-xs px-2 font-semibold leading-normal">
+                            {item.placeholderLabel}. Foto asli Anda aman tersimpan di browser.
                           </p>
 
-                          {/* Small boundary highlight decoration */}
-                          <div className="absolute inset-3 border border-dashed border-white/[0.02] rounded-xl pointer-events-none group-hover:border-[#c5a880]/10 transition-colors" />
+                          <div className="absolute inset-1 border border-dashed border-black/[0.03] rounded-[14px]" />
                         </div>
                       )}
-
-                      {/* Corner aesthetic details */}
-                      <div className="absolute top-2 left-2 w-2 h-2 border-t border-l border-white/5 pointer-events-none" />
-                      <div className="absolute bottom-2 right-2 w-2 h-2 border-b border-r border-white/5 pointer-events-none" />
                     </motion.div>
                   </div>
                 );
               })}
             </AnimatePresence>
 
-            {/* Empty placeholder if filtered layout yields nothing */}
             {filteredItems.length === 0 && (
-              <div className="py-20 text-center text-neutral-500 bg-zinc-950/20 border border-dashed border-white/5 rounded-3xl">
-                <p className="font-sans font-light text-sm">Tidak ada foto dalam kategori filter ini.</p>
+              <div className="py-20 text-center text-ink-soft bg-cream/40 border border-dashed border-black/10 rounded-[24px] shadow-clay-inset">
+                <p className="font-sans font-bold text-xs">Tidak ada arsip foto dalam kategori filter ini.</p>
               </div>
             )}
           </div>
@@ -624,7 +592,7 @@ export default function About() {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.25 }}
-                className="fixed inset-0 z-50 flex items-center justify-center bg-black/98 backdrop-blur-md p-4 sm:p-6 md:p-8"
+                className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4 sm:p-6"
                 onClick={() => setActivePhotoIndex(null)}
               >
                 
@@ -632,10 +600,10 @@ export default function About() {
                 <button 
                   id="close-lightbox-btn"
                   onClick={() => setActivePhotoIndex(null)}
-                  className="absolute top-6 right-6 w-11 h-11 rounded-full bg-zinc-900/90 border border-white/10 hover:border-[#c5a880] text-white flex items-center justify-center transition-all duration-300 z-50 hover:-rotate-90"
+                  className="absolute top-6 right-6 w-10 h-10 rounded-full bg-cream border border-white text-ink-navy flex items-center justify-center shadow-clay-raised hover:-rotate-90 transition-transform duration-300 z-50 cursor-pointer"
                   aria-label="Tutup Galeri"
                 >
-                  <X size={18} className="stroke-[2.2]" />
+                  <X size={16} className="stroke-[2.2]" />
                 </button>
 
                 {/* Left Controller Arrow */}
@@ -645,10 +613,10 @@ export default function About() {
                     e.stopPropagation();
                     handlePrev();
                   }}
-                  className="absolute left-4 sm:left-6 md:left-8 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-zinc-900/90 border border-white/10 hover:border-[#c5a880] text-white flex items-center justify-center transition-all duration-300 z-40 hover:-translate-x-0.5"
+                  className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-cream border border-white text-ink-navy flex items-center justify-center shadow-clay-raised hover:scale-105 transition-transform z-40 cursor-pointer"
                   aria-label="Foto Sebelumnya"
                 >
-                  <ChevronLeft size={20} className="stroke-[2.5]" />
+                  <ChevronLeft size={18} className="stroke-[2.5]" />
                 </button>
 
                 {/* Right Controller Arrow */}
@@ -658,84 +626,76 @@ export default function About() {
                     e.stopPropagation();
                     handleNext();
                   }}
-                  className="absolute right-4 sm:right-6 md:right-8 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-zinc-900/90 border border-white/10 hover:border-[#c5a880] text-white flex items-center justify-center transition-all duration-300 z-40 hover:translate-x-0.5"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-cream border border-white text-ink-navy flex items-center justify-center shadow-clay-raised hover:scale-105 transition-transform z-40 cursor-pointer"
                   aria-label="Foto Selanjutnya"
                 >
-                  <ChevronRightIcon size={20} className="stroke-[2.5]" />
+                  <ChevronRightIcon size={18} className="stroke-[2.5]" />
                 </button>
 
-                {/* Photo Card container detail */}
+                {/* Photo Card container detail - Premium Cream Archival Dossier */}
                 <motion.div
                   initial={{ scale: 0.96 }}
                   animate={{ scale: 1 }}
                   exit={{ scale: 0.96 }}
                   transition={{ type: "spring", damping: 24 }}
                   onClick={(e) => e.stopPropagation()}
-                  className="w-full max-w-5xl bg-[#09090b] border border-white/10 rounded-3xl overflow-hidden shadow-2xl grid md:grid-cols-12 max-h-[92vh] md:max-h-[82vh] relative"
+                  className="w-full max-w-4xl bg-cream border border-white rounded-[24px] overflow-hidden shadow-clay-raised grid md:grid-cols-12 max-h-[92vh] md:max-h-[80vh] relative p-4 gap-4"
                 >
                   
                   {/* Photo Box side */}
-                  <div className="md:col-span-7 bg-black flex items-center justify-center relative min-h-[35vh] md:min-h-0 max-h-[48vh] md:max-h-full overflow-hidden border-b md:border-b-0 md:border-r border-white/5">
+                  <div className="md:col-span-7 bg-bone-dark/30 rounded-[16px] flex items-center justify-center relative min-h-[30vh] md:min-h-0 max-h-[45vh] md:max-h-full overflow-hidden border border-black/5 shadow-clay-inset">
                     {activeSrc ? (
                       <img
                         src={activeSrc}
                         alt={activeItem.title}
                         referrerPolicy="no-referrer"
-                        className="w-full h-full object-contain max-h-[48vh] md:max-h-full"
+                        className="w-full h-full object-contain max-h-[45vh] md:max-h-full"
                       />
                     ) : (
-                      <div className="text-neutral-500 font-mono text-xs">Tidak ada gambar</div>
+                      <div className="text-ink-soft font-mono text-xs">Tidak ada gambar</div>
                     )}
                     
-                    {/* Scale Detail logo */}
-                    <div className="absolute bottom-4 left-4 bg-zinc-950/80 border border-white/5 backdrop-blur-md rounded-xl px-3 py-1 flex items-center gap-1.5 text-[9px] font-mono text-neutral-400">
-                      <ZoomIn size={10} className="text-[#c5a880]" />
-                      <span>Kualitas Foto Asli</span>
+                    <div className="absolute bottom-3 left-3 bg-cream/90 border border-white backdrop-blur-sm rounded-lg px-2.5 py-1 flex items-center gap-1 text-[8px] font-bold text-deep-teal shadow-sm">
+                      <ZoomIn size={9} />
+                      <span>PRATINJAU FOTO</span>
                     </div>
                   </div>
 
                   {/* Text Meta Side */}
-                  <div className="md:col-span-5 p-6 md:p-8 flex flex-col justify-between bg-zinc-950/20 relative">
+                  <div className="md:col-span-5 p-4 flex flex-col justify-between relative h-full">
                     
-                    <div className="space-y-5">
+                    <div className="space-y-4">
                       <div>
-                        <span className="text-[10px] font-mono uppercase tracking-widest text-[#c5a880] mb-2.5 inline-block">
+                        <span className="text-[8px] font-mono uppercase tracking-widest text-amber-clay-dark font-extrabold bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
                           {activeItem.category === 'aktivitas' ? 'Aktivitas Organisasi' : 'Suka Foto / Potret'}
                         </span>
-                        <h3 className="text-2xl font-display font-medium text-white mb-2 leading-tight tracking-tight">
+                        <h3 className="text-xl font-display font-bold text-ink-navy mt-2 leading-tight tracking-tight">
                           {activeItem.title}
                         </h3>
                       </div>
 
                       {/* Metadata fields */}
-                      <div className="space-y-2.5 pt-1">
-                        <div className="flex items-center gap-3 text-neutral-300 text-xs">
-                          <div className="w-7 h-7 rounded-lg bg-white/5 border border-white/5 flex items-center justify-center text-[#c5a880]">
-                            <ImageIcon size={12} />
-                          </div>
-                          <span className="font-sans font-light">{activeItem.date}</span>
+                      <div className="space-y-2 border-y border-black/5 py-3">
+                        <div className="flex items-center gap-2.5 text-ink-soft text-xs font-semibold">
+                          <ImageIcon size={12} className="text-deep-teal" />
+                          <span>{activeItem.date}</span>
                         </div>
 
-                        <div className="flex items-center gap-3 text-neutral-300 text-xs">
-                          <div className="w-7 h-7 rounded-lg bg-white/5 border border-white/5 flex items-center justify-center text-[#c5a880]">
-                            <MapPin size={12} />
-                          </div>
-                          <span className="font-sans font-light">{activeItem.location}</span>
+                        <div className="flex items-center gap-2.5 text-ink-soft text-xs font-semibold">
+                          <MapPin size={12} className="text-deep-teal" />
+                          <span>{activeItem.location}</span>
                         </div>
                       </div>
-
-                      {/* Divider */}
-                      <div className="h-[1px] w-full bg-white/5 my-4" />
                       
-                      <p className="text-neutral-400 font-sans font-light text-xs sm:text-sm leading-relaxed">
+                      <p className="text-ink-soft font-sans font-semibold text-xs sm:text-sm leading-relaxed max-h-[22vh] overflow-y-auto pr-1">
                         {activeItem.description}
                       </p>
                     </div>
 
-                    {/* Footer counter within modal */}
-                    <div className="mt-8 pt-4 border-t border-white/5 flex items-center justify-between text-[10px] font-mono text-neutral-500">
-                      <span>M. Faiz Dzahin Portfolio</span>
-                      <span>{activePhotoIndex + 1} / {itemsWithPhotos.length}</span>
+                    {/* Counter within modal */}
+                    <div className="pt-4 border-t border-black/5 flex items-center justify-between text-[9px] font-bold text-ink-soft">
+                      <span>Muhammad Faiz Dzahin</span>
+                      <span>Foto {activePhotoIndex + 1} dari {itemsWithPhotos.length}</span>
                     </div>
                   </div>
 

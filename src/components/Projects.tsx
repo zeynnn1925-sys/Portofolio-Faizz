@@ -10,10 +10,9 @@ interface Project {
   highlights: string[];
   link: string;
   github: string;
-  colorClass: string;
-  glowColor: string;
   icon: ComponentType<any>;
   metric: { value: string; label: string };
+  tags: string[];
 }
 
 export default function Projects() {
@@ -32,10 +31,9 @@ export default function Projects() {
       ],
       link: "https://github.com/zeynnn1925-sys/opmaz-admin-hub",
       github: "https://github.com/zeynnn1925-sys/opmaz-admin-hub",
-      colorClass: "border-white/5 hover:border-[#c5a880]/30 hover:shadow-[0_15px_40px_rgba(197,168,128,0.06)] hover:bg-white/[0.01]",
-      glowColor: "rgba(197, 168, 128, 0.15)",
       icon: Database,
-      metric: { value: "200+", label: "Arsip Surat Digital" }
+      metric: { value: "200+", label: "Arsip Surat Digital" },
+      tags: ["React Hub", "Excel API", "DocuVault"]
     },
     {
       id: 2,
@@ -49,10 +47,9 @@ export default function Projects() {
       ],
       link: "https://github.com/zeynnn1925-sys/al-zaytun-portal",
       github: "https://github.com/zeynnn1925-sys/al-zaytun-portal",
-      colorClass: "border-white/5 hover:border-[#c5a880]/30 hover:shadow-[0_15px_40px_rgba(197,168,128,0.06)] hover:bg-white/[0.01]",
-      glowColor: "rgba(197, 168, 128, 0.15)",
       icon: Shield,
-      metric: { value: "100%", label: "Perizinan Tepat Waktu" }
+      metric: { value: "100%", label: "Perizinan Tepat Waktu" },
+      tags: ["Web Portal", "Data Entry", "Secure Log"]
     },
     {
       id: 3,
@@ -66,10 +63,9 @@ export default function Projects() {
       ],
       link: "https://github.com/zeynnn1925-sys/mail-merge-helper",
       github: "https://github.com/zeynnn1925-sys/mail-merge-helper",
-      colorClass: "border-white/5 hover:border-[#c5a880]/30 hover:shadow-[0_15px_40px_rgba(197,168,128,0.06)] hover:bg-white/[0.01]",
-      glowColor: "rgba(197, 168, 128, 0.15)",
       icon: Mail,
-      metric: { value: "30+", label: "Rapat Terotomasi" }
+      metric: { value: "30+", label: "Rapat Terotomasi" },
+      tags: ["Mail Merge", "Automation", "PDF Builder"]
     },
     {
       id: 4,
@@ -83,10 +79,9 @@ export default function Projects() {
       ],
       link: "https://github.com/zeynnn1925-sys/kamenrider-eezz-catalog",
       github: "https://github.com/zeynnn1925-sys/kamenrider-eezz-catalog",
-      colorClass: "border-white/5 hover:border-[#c5a880]/30 hover:shadow-[0_15px_40px_rgba(197,168,128,0.06)] hover:bg-white/[0.01]",
-      glowColor: "rgba(197, 168, 128, 0.15)",
       icon: Zap,
-      metric: { value: "100+", label: "Aset & Efek Suara" }
+      metric: { value: "100+", label: "Aset & Efek Suara" },
+      tags: ["ThreeJS 3D", "Audio FX", "Index Catalog"]
     }
   ];
 
@@ -96,11 +91,11 @@ export default function Projects() {
     const width = rect.width;
     const height = rect.height;
     
-    const mouseX = e.clientX - rect.left; // 0 to width
-    const mouseY = e.clientY - rect.top; // 0 to height
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
 
-    const rx = -((mouseY - height / 2) / (height / 2)) * 6; // tilt angle Y axis (max 6 deg)
-    const ry = ((mouseX - width / 2) / (width / 2)) * 6; // tilt angle X axis (max 6 deg)
+    const rx = -((mouseY - height / 2) / (height / 2)) * 5;
+    const ry = ((mouseX - width / 2) / (width / 2)) * 5;
 
     setTiltCoords(prev => ({
       ...prev,
@@ -108,7 +103,7 @@ export default function Projects() {
         rx,
         ry,
         active: true,
-        mx: (mouseX / width) * 100, // percentage for dynamic sleek reflection light
+        mx: (mouseX / width) * 100,
         my: (mouseY / height) * 100
       }
     }));
@@ -122,252 +117,229 @@ export default function Projects() {
   };
 
   return (
-    <section id="projects" className="py-24 md:py-32 relative bg-cyber-grid bg-[#09090b] overflow-hidden">
+    <section id="projects" className="py-24 md:py-32 relative bg-bone-light overflow-hidden">
       
       {/* Background elegant elements */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-[20%] left-[-10%] w-[45vw] h-[45vw] rounded-full bg-amber-500/[0.02] blur-[120px]"></div>
-        <div className="absolute bottom-[20%] right-[-10%] w-[45vw] h-[45vw] rounded-full bg-neutral-400/[0.02] blur-[120px]"></div>
-        <div className="absolute inset-0 bg-dot-grid opacity-15"></div>
+        <div className="absolute top-[20%] left-[-10%] w-[45vw] h-[45vw] rounded-full bg-amber-clay/5 blur-[120px]" />
+        <div className="absolute inset-0 bg-paper-grid opacity-75" />
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
+      <div className="max-w-6xl mx-auto px-6 md:px-12 relative z-10">
         
         {/* Section Title */}
         <motion.div 
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.6 }}
-          className="mb-16 md:mb-24 flex flex-col md:flex-row md:items-end justify-between gap-8"
+          transition={{ duration: 0.5, ease: [0.25, 1, 0.5, 1] }}
+          className="mb-16 flex flex-col md:flex-row md:items-end justify-between gap-6"
         >
           <div>
-            <span className="text-xs font-semibold uppercase tracking-widest text-[#c5a880] font-mono block mb-3"># Portofolio Proyek</span>
-            <h2 className="text-4xl md:text-6xl font-display font-semibold text-white tracking-tight leading-none">
-              Katalog <span className="text-gradient-gold italic font-normal">Proyek</span>
+            <span className="text-xs font-bold uppercase tracking-widest text-deep-teal font-mono block mb-2">PORTOFOLIO PROYEK</span>
+            <h2 className="text-3xl md:text-5xl font-display font-medium text-ink-navy tracking-tight leading-none">
+              Katalog <span className="text-amber-clay-dark italic font-semibold">Proyek</span>
             </h2>
-            <div className="h-[1px] w-20 bg-gradient-to-r from-[#c5a880] via-[#eedec9] to-transparent mt-4"></div>
+            <div className="h-[3px] w-16 bg-amber-clay rounded-full mt-3"></div>
           </div>
-          <p className="text-neutral-400 font-sans font-light text-xs sm:text-sm max-w-sm leading-relaxed">
-            Ekosistem solusi kearsipan pintar OPMAZ, sistem manajemen portal pendidikan terpadu, serta aplikasi produktivitas all-in-one tercanggih.
+          <p className="text-ink-soft font-sans font-medium text-xs sm:text-sm max-w-sm leading-relaxed">
+            Ekosistem solusi kearsipan pintar OPMAZ, sistem manajemen portal pendidikan terpadu, serta aplikasi produktivitas personal.
           </p>
         </motion.div>
 
-        {/* LIFEFLOW - PLATINUM FEATURED WORK */}
+        {/* LIFEFLOW - FEATURED WORK IN CLAYMORPHISM */}
         <motion.div 
-          initial={{ opacity: 0, y: 40 }}
+          initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="mb-14 relative rounded-3xl bg-zinc-950/50 border border-white/5 hover:border-[#c5a880]/30 shadow-[0_20px_50px_rgba(0,0,0,0.7)] p-6 sm:p-8 md:p-12 overflow-hidden group transition-all duration-500"
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.5, ease: [0.25, 1, 0.5, 1], delay: 0.1 }}
+          className="mb-14 relative rounded-[30px] bg-cream border border-white shadow-clay-raised p-6 sm:p-8 md:p-10 overflow-hidden group transition-all duration-300 hover:shadow-clay-raised-hover"
         >
-          {/* Glowing gradient backdrops */}
-          <div className="absolute top-0 right-0 w-[350px] h-[350px] bg-[#c5a880]/5 rounded-full blur-[100px] pointer-events-none" />
-          <div className="absolute bottom-0 left-0 w-[250px] h-[250px] bg-neutral-400/5 rounded-full blur-[90px] pointer-events-none" />
-          
           {/* Card Header row */}
-          <div className="flex items-center justify-between mb-8 flex-wrap gap-4 relative z-10">
-            <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#c5a880]/5 border border-[#c5a880]/10 text-[#c5a880] font-sans text-[10px] uppercase font-bold tracking-wider">
-              <Sparkles size={11} className="text-[#c5a880]" />
+          <div className="flex items-center justify-between mb-8 flex-wrap gap-4 relative z-10 pt-3">
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-bone-dark/40 border border-black/5 text-deep-teal font-mono text-[9px] uppercase font-bold shadow-clay-inset">
+              <Sparkles size={11} className="text-amber-clay-dark" />
               Proyek Unggulan Teratas (Featured App)
             </div>
             
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               <a 
                 href="https://github.com/zeynnn1925-sys/life-flow" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="flex items-center gap-2 p-2 px-3.5 rounded-lg bg-neutral-900/60 border border-white/5 hover:border-white/10 text-neutral-400 hover:text-white transition-all text-[11px] font-sans font-medium"
+                className="flex items-center gap-1.5 p-2 px-3.5 rounded-xl bg-cream border border-white shadow-clay-btn text-ink-navy hover:text-amber-clay-dark font-mono text-[10px] font-bold active:scale-95 transition-all"
                 title="Github Repository"
               >
-                <Github size={13} />
-                <span>Source Code</span>
+                <Github size={12} />
+                <span>Source</span>
               </a>
               <a 
                 href="https://life-flow-ashy.vercel.app/" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="flex items-center gap-2 p-2 px-4 rounded-lg bg-white hover:bg-[#c5a880] text-zinc-950 hover:scale-[1.01] transition-all text-[11px] font-sans font-bold"
+                className="flex items-center gap-1.5 p-2 px-4 rounded-xl bg-amber-clay border border-white shadow-clay-btn text-ink-navy hover:bg-amber-clay/90 font-mono text-[10px] font-bold active:scale-95 transition-all"
                 title="Kunjungi Website"
               >
-                <ExternalLink size={13} />
-                <span>Kunjungi Website</span>
+                <ExternalLink size={12} />
+                <span>Live Demo</span>
               </a>
             </div>
           </div>
 
           {/* Grid Layout Detail */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center relative z-10">
             
             {/* Left Side: Copywriting & Bullet Solutions */}
-            <div className="lg:col-span-6 space-y-6">
-              <div className="space-y-1.5">
-                <span className="text-[10px] text-[#c5a880] font-mono uppercase font-black tracking-widest block">
-                  ALL-IN-ONE PERSONAL PRODUCTIVITY & WEALTH MANAGEMENT SYSTEM
+            <div className="lg:col-span-6 space-y-5">
+              <div className="space-y-1">
+                <span className="text-[9px] text-amber-clay-dark font-mono uppercase font-black tracking-wider block">
+                  PERSONAL PRODUCTIVITY & WEALTH MANAGEMENT SYSTEM
                 </span>
-                <h3 className="text-3xl sm:text-4.5xl font-display font-medium text-white tracking-tight leading-none">
+                <h3 className="text-2xl sm:text-3xl font-display font-bold text-ink-navy tracking-tight leading-none">
                   LifeFlow System
                 </h3>
-                <div className="flex flex-wrap items-center gap-2 pt-1">
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 border border-white/5 text-neutral-400">Vite React</span>
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 border border-white/5 text-neutral-400">Tailwind CSS</span>
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 border border-white/5 text-neutral-400">AI Centric Engine</span>
+                <div className="flex flex-wrap items-center gap-1.5 pt-2">
+                  <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-lg bg-bone-dark/20 border border-black/5 text-deep-teal shadow-clay-inset">Vite React</span>
+                  <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-lg bg-bone-dark/20 border border-black/5 text-deep-teal shadow-clay-inset">Tailwind CSS</span>
+                  <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-lg bg-bone-dark/20 border border-black/5 text-deep-teal shadow-clay-inset">AI Centric Engine</span>
                 </div>
               </div>
 
-              <p className="text-neutral-400 font-sans font-light text-sm leading-relaxed">
+              <p className="text-ink-soft font-sans font-medium text-xs sm:text-sm leading-relaxed">
                 LifeFlow adalah platform produktivitas dan manajemen keuangan pribadi all-in-one yang menghubungkan semua aspek penting kehidupan dalam satu ekosistem terintegrasi. Ketika catatan pengeluaran, rutinitas kebiasaan harian, agenda harian, dan pencapaian target personal Anda disatukan, Anda mendapatkan kejelasan absolut untuk melangkah maju.
               </p>
 
               {/* Core Features Cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                 
-                <div className="p-3.5 rounded-xl bg-white/[0.01] border border-white/5 hover:border-white/10 hover:bg-white/[0.02] transition-colors duration-300">
-                  <div className="flex items-center gap-2 mb-1.5">
-                    <span className="text-sm">💰</span>
-                    <h5 className="text-[11px] font-bold font-sans text-white uppercase tracking-wider">AI Financial Advisor</h5>
+                <div className="p-4 rounded-[16px] bg-bone-dark/20 border border-black/5 shadow-clay-inset hover:bg-bone-dark/30 transition-colors">
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <span className="text-xs">💰</span>
+                    <h5 className="text-[10px] font-bold font-sans text-ink-navy uppercase tracking-wider">AI Financial Advisor</h5>
                   </div>
-                  <p className="text-[10px] text-neutral-400 font-light leading-relaxed">
+                  <p className="text-[10px] text-ink-soft font-semibold leading-relaxed">
                     Pencatatan pemasukan dan pengeluaran cerdas, dianalisis langsung oleh AI berbasis aturan budgeting 50/30/20.
                   </p>
                 </div>
 
-                <div className="p-3.5 rounded-xl bg-white/[0.01] border border-white/5 hover:border-white/10 hover:bg-white/[0.02] transition-colors duration-300">
-                  <div className="flex items-center gap-2 mb-1.5">
-                    <span className="text-sm">🔥</span>
-                    <h5 className="text-[11px] font-bold font-sans text-white uppercase tracking-wider">Habit & Streak System</h5>
+                <div className="p-4 rounded-[16px] bg-bone-dark/20 border border-black/5 shadow-clay-inset hover:bg-bone-dark/30 transition-colors">
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <span className="text-xs">🔥</span>
+                    <h5 className="text-[10px] font-bold font-sans text-ink-navy uppercase tracking-wider">Habit & Streak System</h5>
                   </div>
-                  <p className="text-[10px] text-neutral-400 font-light leading-relaxed">
+                  <p className="text-[10px] text-ink-soft font-semibold leading-relaxed">
                     Sistem gamifikasi konsisten dengan pelacak streak harian, perayaan milestone, serta target pencapaian adaptif.
                   </p>
                 </div>
 
-                <div className="p-3.5 rounded-xl bg-white/[0.01] border border-white/5 hover:border-white/10 hover:bg-white/[0.02] transition-colors duration-300">
-                  <div className="flex items-center gap-2 mb-1.5">
-                    <span className="text-sm">✨</span>
-                    <h5 className="text-[11px] font-bold font-sans text-white uppercase tracking-wider">AI Daily Planner</h5>
+                <div className="p-4 rounded-[16px] bg-bone-dark/20 border border-black/5 shadow-clay-inset hover:bg-bone-dark/30 transition-colors">
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <span className="text-xs">✨</span>
+                    <h5 className="text-[10px] font-bold font-sans text-ink-navy uppercase tracking-wider">AI Daily Planner</h5>
                   </div>
-                  <p className="text-[10px] text-neutral-400 font-light leading-relaxed">
+                  <p className="text-[10px] text-ink-soft font-semibold leading-relaxed">
                     Satu tap instan untuk menyusun agenda harian optimal berbasis target harian personal Anda.
                   </p>
                 </div>
 
-                <div className="p-3.5 rounded-xl bg-white/[0.01] border border-white/5 hover:border-white/10 hover:bg-white/[0.02] transition-colors duration-300">
-                  <div className="flex items-center gap-2 mb-1.5">
-                    <span className="text-sm">🎯</span>
-                    <h5 className="text-[11px] font-bold font-sans text-white uppercase tracking-wider">Targets & Smart Alerts</h5>
+                <div className="p-4 rounded-[16px] bg-bone-dark/20 border border-black/5 shadow-clay-inset hover:bg-bone-dark/30 transition-colors">
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <span className="text-xs">🎯</span>
+                    <h5 className="text-[10px] font-bold font-sans text-ink-navy uppercase tracking-wider">Targets & Alerts</h5>
                   </div>
-                  <p className="text-[10px] text-neutral-400 font-light leading-relaxed">
+                  <p className="text-[10px] text-ink-soft font-semibold leading-relaxed">
                     Ukur kemajuan di berbagai kategori (kesehatan, finansial, karir) didukung visualisasi persentase transparan.
                   </p>
                 </div>
 
               </div>
 
-
             </div>
 
-            {/* Right Side: EXTREMELY STUNNING MINI WEB APP PREVIEW */}
-            <div className="lg:col-span-6 flex items-center justify-center relative w-full h-full min-h-[350px]">
+            {/* Right Side: EXTREMELY STUNNING LIGHT WEB APP PREVIEW MOCKUP */}
+            <div className="lg:col-span-6 flex items-center justify-center relative w-full h-full min-h-[340px]">
               
               {/* Desktop/Browser Mockup Wrapper */}
-              <div className="w-full bg-[#0d0d11] rounded-2xl border border-white/10 overflow-hidden shadow-[0_25px_60px_rgba(0,0,0,0.8)] flex flex-col transform group-hover:scale-[1.002] transition-all duration-500">
+              <div className="w-full bg-cream rounded-2xl border border-white overflow-hidden shadow-clay-raised flex flex-col transform group-hover:scale-[1.002] transition-all duration-500 p-1">
                 
                 {/* Browser address bar */}
-                <div className="bg-neutral-950/80 border-b border-white/5 py-2.5 px-4 flex items-center justify-between">
+                <div className="bg-bone-dark/40 border-b border-black/5 py-2 px-4 flex items-center justify-between rounded-t-xl">
                   <div className="flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-zinc-800" />
-                    <span className="w-2 h-2 rounded-full bg-zinc-700" />
-                    <span className="w-2 h-2 rounded-full bg-zinc-650" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-red-400" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-yellow-400" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-green-400" />
                   </div>
-                  <div className="bg-white/[0.04] border border-white/5 rounded px-3 py-0.5 text-[8px] text-neutral-400 font-mono w-44 text-center truncate">
+                  <div className="bg-cream border border-black/5 rounded-lg px-3 py-0.5 text-[8px] text-ink-soft font-mono font-bold w-44 text-center truncate shadow-clay-inset">
                     life-flow-ashy.vercel.app
                   </div>
-                  <div className="w-6" /> {/* balance spacer */}
+                  <div className="w-6" />
                 </div>
 
-                {/* Internal App frame content matching uploaded PNG layout */}
-                <div className="relative flex-1 bg-gradient-to-br from-[#0c0d12] via-[#09090b] to-[#040405] p-4 flex flex-col md:flex-row items-center gap-4 justify-between overflow-hidden min-h-[260px]">
+                {/* Internal App frame content in Light Claymorphism style */}
+                <div className="relative flex-1 bg-bone-light p-4 flex flex-col md:flex-row items-center gap-4 justify-between overflow-hidden min-h-[250px] rounded-b-xl border-t border-black/5">
                   
-                  {/* Decorative glowing backdrops inside mockup */}
-                  <div className="absolute top-1/4 left-1/3 w-32 h-32 bg-[#c5a880]/5 rounded-full blur-2xl pointer-events-none" />
-                  <div className="absolute bottom-1/4 right-1/4 w-32 h-32 bg-neutral-400/5 rounded-full blur-2xl pointer-events-none" />
-
                   {/* Mock Portal Left Side: Headline */}
-                  <div className="md:w-[52%] text-left space-y-1.5 relative z-10 pointer-events-none select-none">
+                  <div className="md:w-[55%] text-left space-y-1.5 relative z-10 pointer-events-none select-none">
                     <div className="flex items-center gap-1.5">
-                      <div className="w-4 h-4 rounded bg-white/5 border border-white/10 flex items-center justify-center">
-                        <span className="text-[7px] text-white font-black font-mono">LF</span>
+                      <div className="w-5 h-5 rounded-[6px] bg-cream border border-white flex items-center justify-center shadow-clay-subtle">
+                        <span className="text-[8px] text-deep-teal font-extrabold font-mono">LF</span>
                       </div>
-                      <span className="text-[8px] font-mono font-bold tracking-wider text-white">LIFE FLOW</span>
+                      <span className="text-[8px] font-mono font-bold tracking-wider text-ink-navy">LIFE FLOW</span>
                     </div>
                     
-                    <span className="text-[5px] tracking-widest font-sans font-extrabold text-[#c5a880] block uppercase">
+                    <span className="text-[5px] tracking-widest font-sans font-black text-amber-clay-dark block uppercase">
                       MASTER YOUR LIFE, FIND YOUR FLOW
                     </span>
 
-                    <h4 className="text-xs sm:text-sm font-sans font-bold text-white tracking-wide leading-tight max-w-[145px]">
-                      MANAGE YOUR <span className="text-[#c5a880]">LIFE & FINANCES</span> IN ONE PLACE.
+                    <h4 className="text-xs sm:text-[11px] font-sans font-extrabold text-ink-navy tracking-tight leading-snug max-w-[145px]">
+                      MANAGE YOUR <span className="text-amber-clay-dark">LIFE & FINANCES</span> IN ONE PLACE.
                     </h4>
 
-                    <p className="text-[6px] text-neutral-400 font-light leading-relaxed max-w-[155px]">
-                      join thousands of users who are taking control of their daily habits, tasks, and financial goals with life flow.
+                    <p className="text-[6px] text-ink-soft font-bold leading-normal max-w-[155px]">
+                      Join thousands of users who are taking control of their daily habits, tasks, and financial goals with Life Flow.
                     </p>
 
-                    <div className="flex items-center gap-1.5 pt-1">
+                    <div className="flex items-center gap-1 pt-1">
                       <div className="flex -space-x-1">
-                        <span className="w-2.5 h-2.5 rounded-full bg-zinc-800 ring-1 ring-white/10" />
-                        <span className="w-2.5 h-2.5 rounded-full bg-zinc-700 ring-1 ring-white/10" />
-                        <span className="w-2.5 h-2.5 rounded-full bg-zinc-650 ring-1 ring-white/10" />
+                        <span className="w-2.5 h-2.5 rounded-full bg-bone-dark ring-1 ring-white" />
+                        <span className="w-2.5 h-2.5 rounded-full bg-amber-clay ring-1 ring-white" />
+                        <span className="w-2.5 h-2.5 rounded-full bg-deep-teal ring-1 ring-white" />
                       </div>
-                      <span className="text-[6px] text-neutral-400 font-semibold">4.9/5 RATING FROM USERS</span>
+                      <span className="text-[5.5px] text-ink-soft font-bold">4.9/5 RATING FROM USERS</span>
                     </div>
                   </div>
 
                   {/* Mock Portal Right Side: User Login box */}
-                  <div className="md:w-[48%] bg-[#0e0e12]/95 border border-white/5 rounded-xl p-3 shadow-lg flex flex-col items-center justify-center relative z-10 pointer-events-none select-none">
+                  <div className="md:w-[45%] bg-cream border border-white rounded-xl p-3 shadow-clay-raised flex flex-col items-center justify-center relative z-10 pointer-events-none select-none">
                     
-                    {/* Rounded login icon banner */}
-                    <div className="w-7 h-7 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center mb-1.5">
-                      <div className="w-3.5 h-3.5 rounded bg-neutral-900 border border-white/5 flex items-center justify-center">
-                        <span className="text-[6px] text-neutral-300 font-black font-mono">LF</span>
-                      </div>
+                    <div className="w-6 h-6 rounded-lg bg-bone-dark/30 border border-black/5 flex items-center justify-center mb-1 shadow-clay-inset">
+                      <span className="text-[6px] text-deep-teal font-extrabold font-mono">LF</span>
                     </div>
 
-                    <span className="text-[8px] font-sans font-bold text-white uppercase tracking-wider text-center block leading-none">
+                    <span className="text-[7px] font-sans font-bold text-ink-navy uppercase tracking-wider text-center block leading-none">
                       WELCOME BACK
                     </span>
-                    <span className="text-[5px] text-neutral-500 tracking-tight text-center block mb-2 mt-0.5">
-                      sign in to continue to life flow
+                    <span className="text-[5px] text-ink-soft tracking-tight text-center block mb-1.5 mt-0.5 font-bold">
+                      sign in to continue
                     </span>
 
                     {/* Mini inputs */}
                     <div className="w-full space-y-1 mb-2">
-                      <div className="w-full rounded bg-neutral-950 border border-white/5 py-1 px-1.5 flex items-center gap-1">
-                         <Mail size={5} className="text-neutral-600" />
-                         <span className="text-[6px] text-neutral-600 font-light font-sans">email</span>
+                      <div className="w-full rounded-md bg-bone-dark/20 border border-black/5 py-0.5 px-1 flex items-center gap-1 shadow-clay-inset">
+                         <Mail size={5} className="text-ink-soft" />
+                         <span className="text-[5px] text-ink-soft font-bold font-sans">email</span>
                       </div>
-                      <div className="w-full rounded bg-neutral-950 border border-white/5 py-1 px-1.5 flex items-center gap-1">
-                         <Shield size={5} className="text-neutral-600" />
-                         <span className="text-[6px] text-neutral-600 font-light font-sans">password</span>
+                      <div className="w-full rounded-md bg-bone-dark/20 border border-black/5 py-0.5 px-1 flex items-center gap-1 shadow-clay-inset">
+                         <Shield size={5} className="text-ink-soft" />
+                         <span className="text-[5px] text-ink-soft font-bold font-sans">password</span>
                       </div>
                     </div>
 
                     {/* Action button */}
-                    <div className="w-full py-1 rounded bg-[#c5a880] flex items-center justify-center text-zinc-950 font-sans font-bold text-[6.5px]">
+                    <div className="w-full py-0.5 rounded-md bg-amber-clay text-ink-navy border border-white font-sans font-bold text-[6px] text-center shadow-clay-btn">
                       SIGN IN
-                    </div>
-
-                    <div className="w-full flex items-center justify-center text-[5px] text-neutral-600 font-mono my-1 pl-1">
-                      <span className="bg-[#0e0e12] px-1">OR CONTINUE WITH</span>
-                    </div>
-
-                    {/* Google & Github mini option buttons */}
-                    <div className="flex items-center gap-1.5">
-                      <div className="w-3.5 h-3.5 rounded bg-neutral-950 border border-white/5 flex items-center justify-center text-[5px] text-neutral-400">G</div>
-                      <div className="w-3.5 h-3.5 rounded bg-neutral-950 border border-white/5 flex items-center justify-center text-[5px] text-neutral-400">Git</div>
                     </div>
 
                   </div>
@@ -389,10 +361,10 @@ export default function Projects() {
             return (
               <motion.div
                 key={project.id}
-                initial={{ opacity: 0, y: 20, scale: 0.98 }}
-                whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                viewport={{ once: true, margin: "-80px" }}
-                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: idx * 0.12 }}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-60px" }}
+                transition={{ duration: 0.5, ease: [0.25, 1, 0.5, 1], delay: 0.15 + idx * 0.1 }}
                 className="perspective-[1000px] h-full"
               >
                 <div
@@ -402,76 +374,64 @@ export default function Projects() {
                     transform: `rotateX(${tilt.rx}deg) rotateY(${tilt.ry}deg)`,
                     transition: tilt.active ? 'none' : 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
                   }}
-                  className={`relative flex flex-col justify-between h-full rounded-3xl bg-zinc-950/60 border ${project.colorClass} p-8 md:p-10 cursor-pointer group transition-all duration-300`}
+                  className="relative flex flex-col justify-between h-full rounded-[28px] bg-cream border border-white p-6 sm:p-8 cursor-pointer group shadow-clay-raised hover:shadow-clay-raised-hover hover:-translate-y-1 transition-all duration-300"
                   onClick={() => window.open(project.link, '_blank', 'noopener,noreferrer')}
                 >
                   
-                  {/* Dynamic glossy overlay reflecting light according to cursor position */}
-                  {tilt.active && (
-                    <div 
-                      className="absolute inset-0 pointer-events-none"
-                      style={{
-                        background: `radial-gradient(circle at ${tilt.mx}% ${tilt.my}%, ${project.glowColor} 0%, transparent 65%)`,
-                        mixBlendMode: 'screen',
-                        opacity: 0.6,
-                      }}
-                    />
-                  )}
-
-                  {/* Card Content Top Sector */}
+                  {/* Top classification row */}
                   <div>
-                    <div className="flex items-center justify-between mb-8">
-                      <div className="flex items-center gap-2">
-                        <Folder size={13} className="text-neutral-500" />
-                        <span className="text-[10px] font-mono tracking-wider text-[#c5a880] uppercase font-bold">
+                    <div className="flex items-center justify-between mb-6">
+                      <div className="flex items-center gap-1.5">
+                        <Folder size={12} className="text-deep-teal" />
+                        <span className="text-[9px] font-mono tracking-wider text-amber-clay-dark uppercase font-extrabold">
                           {project.category}
                         </span>
                       </div>
                       
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-2">
                         <a 
                           href={project.github}
                           target="_blank"
                           rel="noopener noreferrer"
                           onClick={(e) => e.stopPropagation()}
-                          className="p-2 rounded-lg bg-neutral-900/80 border border-white/5 hover:border-white/10 text-neutral-400 hover:text-white transition-all transform hover:scale-105 duration-200"
+                          className="w-7 h-7 rounded-lg bg-cream border border-white text-ink-navy hover:text-amber-clay-dark flex items-center justify-center shadow-clay-subtle hover:shadow-clay-inset active:scale-95 transition-all duration-200"
                           title="Github Repository"
                         >
-                          <Github size={14} />
+                          <Github size={13} />
                         </a>
                         <a 
                           href={project.link}
                           target="_blank"
                           rel="noopener noreferrer"
                           onClick={(e) => e.stopPropagation()}
-                          className="p-2 rounded-lg bg-neutral-900/80 border border-white/5 hover:border-white/10 text-neutral-400 hover:text-white transition-all transform hover:scale-105 duration-200"
+                          className="w-7 h-7 rounded-lg bg-cream border border-white text-ink-navy hover:text-amber-clay-dark flex items-center justify-center shadow-clay-subtle hover:shadow-clay-inset active:scale-95 transition-all duration-200"
                           title="Open Project"
                         >
-                          <ExternalLink size={14} />
+                          <ExternalLink size={13} />
                         </a>
                       </div>
                     </div>
 
-                    <div className="flex items-start gap-4 mb-5">
-                      <div className="w-11 h-11 rounded-xl bg-neutral-900/70 border border-white/5 flex items-center justify-center text-white">
-                        <ProjectIcon size={18} className="text-neutral-300 group-hover:scale-105 transition-transform duration-300" />
+                    <div className="flex items-start gap-3 mb-4">
+                      <div className="w-10 h-10 rounded-xl bg-bone-dark/30 border border-black/5 flex items-center justify-center text-deep-teal shadow-clay-inset shrink-0">
+                        <ProjectIcon size={16} className="group-hover:scale-105 transition-transform duration-300" />
                       </div>
                       <div>
-                        <h3 className="text-xl font-display font-medium text-white">
+                        <h3 className="text-lg font-display font-bold text-ink-navy leading-tight">
                           {project.title}
                         </h3>
-                        <span className="text-[10px] text-neutral-550 font-mono tracking-tight font-medium">Pengembangan Sistem</span>
                       </div>
                     </div>
 
-                    <p className="text-xs sm:text-sm font-sans font-light text-neutral-400 leading-relaxed mb-6">
+                    <p className="text-xs font-sans font-semibold text-ink-soft leading-relaxed mb-5">
                       {project.description}
                     </p>
 
-                    <ul className="space-y-2 mb-8">
+                    {/* Archival list highlights */}
+                    <ul className="space-y-2 mb-6">
                       {project.highlights.map((highlight, hIdx) => (
-                        <li key={hIdx} className="flex items-center gap-2.5 text-xs font-light text-neutral-300">
-                          <span className="w-1 h-1 rounded-full bg-[#c5a880]/60 shrink-0" />
+                        <li key={hIdx} className="flex items-center gap-2 text-xs font-semibold text-ink-navy">
+                          <span className="w-1.5 h-1.5 rounded-full bg-amber-clay shrink-0" />
                           <span>{highlight}</span>
                         </li>
                       ))}
@@ -479,23 +439,27 @@ export default function Projects() {
                   </div>
 
                   {/* Card Bottom Sector (Metrics Display & Action) */}
-                  <div className="pt-6 border-t border-white/5 flex items-center justify-between">
+                  <div className="pt-4 border-t border-black/5 flex items-center justify-between">
                     <div>
-                      <span className="text-[8px] text-neutral-500 font-mono uppercase tracking-widest block mb-0.5">METRIK TERVALIDASI</span>
-                      <div className="flex items-baseline gap-1.5">
-                        <span className="text-lg font-bold font-mono text-white group-hover:text-amber-200 transition-colors">
+                      <span className="text-[8px] text-ink-soft uppercase font-extrabold tracking-widest block mb-0.5">PENCAPAIAN PROYEK</span>
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-base font-black font-mono text-deep-teal group-hover:text-amber-clay-dark transition-colors">
                           {project.metric.value}
                         </span>
-                        <span className="text-[10px] text-neutral-400 font-light">
+                        <span className="text-[10px] text-ink-soft font-bold">
                           {project.metric.label}
                         </span>
                       </div>
                     </div>
 
-                    <span className="text-[11px] font-semibold text-neutral-300 font-mono flex items-center gap-1.5 group-hover:text-[#c5a880] transition-colors self-end pb-1">
-                      Detail Proyek
-                      <ExternalLink size={11} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-200" />
-                    </span>
+                    {/* Technology sub-labels */}
+                    <div className="flex gap-1">
+                      {project.tags.map((tag) => (
+                        <span key={tag} className="text-[7.5px] font-mono font-bold bg-bone-dark/40 shadow-clay-inset px-1.5 py-0.5 rounded border border-black/5 text-ink-soft">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
                   </div>
 
                 </div>
@@ -504,31 +468,7 @@ export default function Projects() {
           })}
         </div>
 
-        {/* Dynamic bottom accent banner */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="mt-20 rounded-3xl bg-zinc-950/40 border border-white/5 p-8 flex flex-col sm:flex-row items-center justify-between gap-6 relative overflow-hidden"
-        >
-          <div className="absolute top-[-50%] left-[-10%] w-[30%] h-[100%] bg-amber-500/[0.01] blur-[80px] rounded-full" />
-          <div className="relative z-10">
-            <h4 className="text-md font-bold text-white flex items-center gap-2">
-              <Sparkles size={14} className="text-[#c5a880]" />
-              Memerlukan Solusi Administrasi atau Kearsipan?
-            </h4>
-            <p className="text-xs sm:text-sm font-light text-neutral-400 mt-1 max-w-xl">
-              Hubungi saya untuk berdiskusi mengenai pengembangan sistem administrasi serta pengelolaan data yang terstruktur.
-            </p>
-          </div>
-          <a
-            href="#contact"
-            className="relative z-10 px-5 py-3 rounded-xl bg-neutral-100 hover:bg-[#c5a880] text-zinc-950 font-bold text-[10px] uppercase tracking-widest transition-all duration-300 shrink-0"
-          >
-            Hubungi Kontak
-          </a>
-        </motion.div>
+
 
       </div>
     </section>

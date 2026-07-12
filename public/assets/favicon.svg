@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Circle Stamp Background -->
+  <circle cx="256" cy="256" r="240" fill="#2F5D5A" />
+  
+  <!-- Outer Dotted Stamp Ring -->
+  <circle cx="256" cy="256" r="224" fill="none" stroke="#FFFDF8" stroke-width="4" stroke-dasharray="12 8" opacity="0.85" />
+  
+  <!-- Inner Solid Ring -->
+  <circle cx="256" cy="256" r="200" fill="none" stroke="#FFFDF8" stroke-width="3" opacity="0.9" />
+  
+  <!-- Inner Thin Ring -->
+  <circle cx="256" cy="256" r="190" fill="none" stroke="#FFFDF8" stroke-width="1.5" opacity="0.7" />
+  
+  <!-- Central Letter F -->
+  <text x="256" y="320" font-family="'Fraunces', Georgia, 'Times New Roman', serif" font-size="220" font-weight="700" fill="#FFFDF8" text-anchor="middle">F</text>
+  
+  <!-- Small Administrative Dots/Stars or subtle text -->
+  <text x="256" y="110" font-family="'JetBrains Mono', monospace" font-size="18" font-weight="700" fill="#FFFDF8" letter-spacing="8" text-anchor="middle" opacity="0.75">REKORD</text>
+  <text x="256" y="440" font-family="'JetBrains Mono', monospace" font-size="18" font-weight="700" fill="#FFFDF8" letter-spacing="8" text-anchor="middle" opacity="0.75">ADMINISTRASI</text>
+</svg>
