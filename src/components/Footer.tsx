@@ -1,4 +1,6 @@
+import { motion } from 'motion/react';
 import { ArrowUp, Github, Instagram, Linkedin, Heart } from 'lucide-react';
+import { cardVariants, scrollViewport } from '../lib/animations';
 
 export default function Footer() {
   const scrollToTop = () => {
@@ -13,7 +15,13 @@ export default function Footer() {
       {/* Absolute subtle separating line */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[90%] h-[1.5px] bg-black/5" />
 
-      <div className="max-w-6xl mx-auto px-6 md:px-12 relative z-10">
+      <motion.div 
+        variants={cardVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={scrollViewport}
+        className="max-w-6xl mx-auto px-6 md:px-12 relative z-10"
+      >
         
         {/* Minimal 3-Column Layout */}
         <div className="grid md:grid-cols-3 gap-10 md:gap-8 pb-12 border-b border-black/5">
@@ -119,7 +127,7 @@ export default function Footer() {
           </div>
         </div>
 
-      </div>
+      </motion.div>
     </footer>
   );
 }

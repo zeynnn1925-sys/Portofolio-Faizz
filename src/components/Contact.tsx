@@ -1,5 +1,6 @@
 import { motion } from 'motion/react';
 import { ExternalLink, Mail, Phone, Github, Linkedin } from 'lucide-react';
+import { headerVariants, cardVariants, staggerContainer, scrollViewport, smoothEase } from '../lib/animations';
 
 export default function Contact() {
   const contactCards = [
@@ -53,17 +54,23 @@ export default function Contact() {
           
           {/* Left Column: Headline and description */}
           <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.5, ease: [0.25, 1, 0.5, 1] }}
+            variants={headerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={scrollViewport}
             className="space-y-6"
           >
             <span className="text-xs font-bold uppercase tracking-widest text-deep-teal font-mono block">GET IN TOUCH</span>
             <h2 className="text-3xl sm:text-5xl font-display font-medium text-ink-navy tracking-tight">
               Mari <span className="text-amber-clay-dark italic font-semibold">Terhubung</span>
             </h2>
-            <div className="h-[3px] w-16 bg-amber-clay rounded-full"></div>
+            <motion.div 
+              initial={{ scaleX: 0 }}
+              whileInView={{ scaleX: 1 }}
+              viewport={scrollViewport}
+              transition={{ duration: 0.6, delay: 0.2, ease: smoothEase }}
+              className="h-[3px] w-16 bg-amber-clay rounded-full origin-left"
+            />
             
             <p className="text-ink-soft font-sans font-medium text-sm sm:text-base leading-relaxed max-w-lg">
               Faiz selalu antusias membahas ide baru, operasional administrasi cerdas, entri data yang presisi, atau peluang kolaborasi profesional. Gunakan detail di samping untuk berkoordinasi langsung.
@@ -71,7 +78,13 @@ export default function Contact() {
           </motion.div>
 
           {/* Right Column: 4 Branded Contact Cards */}
-          <div className="space-y-4">
+          <motion.div 
+            variants={staggerContainer(0.1, 0.15)}
+            initial="hidden"
+            whileInView="visible"
+            viewport={scrollViewport}
+            className="space-y-4"
+          >
             {contactCards.map((card, idx) => {
               return (
                 <motion.a
@@ -79,12 +92,9 @@ export default function Contact() {
                   href={card.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  initial={{ opacity: 0, y: 24 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  whileHover="hover"
-                  viewport={{ once: true, margin: "-50px" }}
-                  transition={{ duration: 0.5, ease: [0.25, 1, 0.5, 1], delay: 0.1 + idx * 0.08 }}
-                  className="p-4 sm:p-5 rounded-[22px] bg-cream border border-white block relative overflow-hidden shadow-clay-raised hover:shadow-clay-raised-hover hover:-translate-y-0.5 active:scale-99 transition-all duration-300 group"
+                  variants={cardVariants}
+                  whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                  className="p-4 sm:p-5 rounded-[22px] bg-cream border border-white block relative overflow-hidden shadow-clay-raised hover:shadow-clay-raised-hover active:scale-99 transition-all duration-300 group"
                 >
                   {/* Inside items */}
                   <div className="flex items-center justify-between gap-4 relative z-10 w-full">
@@ -108,7 +118,7 @@ export default function Contact() {
                             src={card.imageUrl} 
                             alt={card.label} 
                             className="w-9 h-9 object-contain"
-                            referrerPolicy="no-referrer"
+                            referrerPolicy="no-referrer" 
                           />
                         ) : (
                           card.icon
@@ -137,7 +147,7 @@ export default function Contact() {
                 </motion.a>
               );
             })}
-          </div>
+          </motion.div>
 
         </div>
 

@@ -5,6 +5,7 @@ import {
   ChevronRight, FileText, FileSpreadsheet, Presentation, Sparkles, 
   Atom, Code2, Braces, Wind, Database, Laptop
 } from 'lucide-react';
+import { headerVariants, cardVariants, staggerContainer, scrollViewport, smoothEase } from '../lib/animations';
 
 export default function Skills() {
   const [previewFile, setPreviewFile] = useState<{ url: string; title: string } | null>(null);
@@ -115,10 +116,10 @@ export default function Skills() {
         
         {/* Section Heading */}
         <motion.div 
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.5, ease: [0.25, 1, 0.5, 1] }}
+          variants={headerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={scrollViewport}
           className="mb-16 md:mb-20 flex flex-col md:flex-row md:items-end justify-between gap-6"
         >
           <div>
@@ -126,7 +127,13 @@ export default function Skills() {
             <h2 className="text-3xl md:text-5xl font-display font-medium text-ink-navy tracking-tight leading-none">
               Keahlian <span className="text-amber-clay-dark italic font-semibold">& Kompetensi</span>
             </h2>
-            <div className="h-[3px] w-16 bg-amber-clay rounded-full mt-3"></div>
+            <motion.div 
+              initial={{ scaleX: 0 }}
+              whileInView={{ scaleX: 1 }}
+              viewport={scrollViewport}
+              transition={{ duration: 0.6, delay: 0.2, ease: smoothEase }}
+              className="h-[3px] w-16 bg-amber-clay rounded-full mt-3 origin-left"
+            />
           </div>
           <p className="text-ink-soft font-sans font-medium text-xs sm:text-sm max-w-sm leading-relaxed">
             Terdiri atas kompetensi teknis di bidang administrasi perkantoran serta kecakapan komunikasi organisasi yang mendukung efisiensi kerja.
@@ -135,24 +142,33 @@ export default function Skills() {
 
         {/* Centered Grid Layout: Hard Skills */}
         <div className="max-w-6xl mx-auto">
-          <div className="flex items-center justify-center gap-2 mb-10 border-b border-black/5 pb-4">
+          <motion.div 
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={scrollViewport}
+            transition={{ duration: 0.5, delay: 0.1, ease: smoothEase }}
+            className="flex items-center justify-center gap-2 mb-10 border-b border-black/5 pb-4"
+          >
             <span className="w-1.5 h-1.5 rounded-full bg-amber-clay" />
             <h3 className="text-xs font-bold text-ink-soft uppercase tracking-widest">
               DAFTAR SKILL & KOMPETENSI UTAMA
             </h3>
-          </div>
+          </motion.div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <motion.div 
+            variants={staggerContainer(0.1, 0.15)}
+            initial="hidden"
+            whileInView="visible"
+            viewport={scrollViewport}
+            className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6"
+          >
             {hardSkills.map((card, idx) => {
               const tilt = tiltCoords[card.id] || { rx: 0, ry: 0, active: false };
               const CardIcon = card.icon;
               return (
                 <motion.div
                   key={card.id}
-                  initial={{ opacity: 0, y: 24 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-100px" }}
-                  transition={{ duration: 0.5, ease: [0.25, 1, 0.5, 1], delay: idx * 0.1 }}
+                  variants={cardVariants}
                   onMouseMove={(e) => handleMouseMoveCard(e, card.id)}
                   onMouseLeave={() => handleMouseLeaveCard(card.id)}
                   onClick={() => setPreviewFile({ url: card.proofFile, title: card.name })}
@@ -309,7 +325,7 @@ export default function Skills() {
                 </motion.div>
               );
             })}
-          </div>
+          </motion.div>
         </div>
       </div>
 

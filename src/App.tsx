@@ -4,6 +4,7 @@
  */
 
 import { useEffect, useState } from 'react';
+import { motion, useScroll, useSpring } from 'motion/react';
 import CustomCursor from './components/CustomCursor';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
@@ -59,9 +60,20 @@ export default function App() {
     setPath('home');
   };
 
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, {
+    stiffness: 120,
+    damping: 28,
+    restDelta: 0.001
+  });
+
   return (
     <div className="min-h-screen bg-bone-light select-text selection:bg-amber-clay selection:text-ink-navy">
       <CustomCursor />
+      <motion.div
+        style={{ scaleX }}
+        className="fixed top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-deep-teal via-amber-clay to-amber-clay-dark origin-left z-[100] pointer-events-none"
+      />
       {path === 'home' ? (
         <>
           <Navbar />

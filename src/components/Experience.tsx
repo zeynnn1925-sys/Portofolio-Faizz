@@ -1,5 +1,6 @@
 import { motion } from 'motion/react';
 import { Calendar, Clock, ShieldCheck, Database } from 'lucide-react';
+import { headerVariants, cardVariants, staggerContainer, scrollViewport, smoothEase } from '../lib/animations';
 
 export default function Experience() {
   const duties = [
@@ -45,25 +46,31 @@ export default function Experience() {
         
         {/* Section Heading */}
         <motion.div 
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.5, ease: [0.25, 1, 0.5, 1] }}
+          variants={headerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={scrollViewport}
           className="mb-16 md:mb-20"
         >
           <span className="text-xs font-bold uppercase tracking-widest text-deep-teal font-mono block mb-2">CORPORATE STEWARDSHIP</span>
           <h2 className="text-3xl md:text-5xl font-display font-medium text-ink-navy tracking-tight">
             Pengalaman <span className="text-amber-clay-dark italic font-semibold">Kepemimpinan</span>
           </h2>
-          <div className="h-[3px] w-16 bg-amber-clay rounded-full mt-3"></div>
+          <motion.div 
+            initial={{ scaleX: 0 }}
+            whileInView={{ scaleX: 1 }}
+            viewport={scrollViewport}
+            transition={{ duration: 0.6, delay: 0.2, ease: smoothEase }}
+            className="h-[3px] w-16 bg-amber-clay rounded-full mt-3 origin-left"
+          />
         </motion.div>
 
         {/* Experience Single Massive Card (Archival Dossier Style) */}
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.5, ease: [0.25, 1, 0.5, 1], delay: 0.1 }}
+          variants={cardVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={scrollViewport}
           className="relative rounded-[28px] bg-cream border border-white shadow-clay-raised p-8 md:p-10 overflow-hidden transition-all duration-300 hover:shadow-clay-raised-hover group"
         >
           {/* Header Row */}
@@ -78,7 +85,13 @@ export default function Experience() {
               </p>
             </div>
 
-            <div className="flex items-center gap-3 bg-bone-dark/30 border border-black/5 rounded-2xl p-3 shadow-clay-inset shrink-0">
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0 }}
+              whileInView={{ scale: 1, opacity: 1 }}
+              viewport={scrollViewport}
+              transition={{ duration: 0.5, delay: 0.2, ease: smoothEase }}
+              className="flex items-center gap-3 bg-bone-dark/30 border border-black/5 rounded-2xl p-3 shadow-clay-inset shrink-0"
+            >
               <span className="w-9 h-9 rounded-xl bg-cream border border-white flex items-center justify-center text-deep-teal shadow-clay-subtle">
                 <Calendar size={15} />
               </span>
@@ -86,21 +99,25 @@ export default function Experience() {
                 <span className="text-[8px] text-ink-soft font-mono uppercase font-bold tracking-wider">Masa Pengabdian</span>
                 <span className="text-xs font-bold text-ink-navy font-mono">2024 - 2025</span>
               </div>
-            </div>
+            </motion.div>
           </div>
 
-          {/* 3-Column Duties Row */}
-          <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
+          {/* 3-Column Duties Staggered Row */}
+          <motion.div 
+            variants={staggerContainer(0.12, 0.2)}
+            initial="hidden"
+            whileInView="visible"
+            viewport={scrollViewport}
+            className="grid md:grid-cols-3 gap-6 lg:gap-8"
+          >
             {duties.map((duty, idx) => {
               const Icon = duty.icon;
               return (
                 <motion.div 
                   key={idx} 
-                  initial={{ opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-50px" }}
-                  transition={{ duration: 0.5, ease: [0.25, 1, 0.5, 1], delay: 0.2 + idx * 0.1 }}
-                  className="flex flex-col gap-4 p-5 rounded-[20px] bg-bone-dark/20 border border-black/5 shadow-clay-inset hover:bg-bone-dark/30 hover:scale-[1.01] transition-all duration-300"
+                  variants={cardVariants}
+                  whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                  className="flex flex-col gap-4 p-5 rounded-[20px] bg-bone-dark/20 border border-black/5 shadow-clay-inset hover:bg-bone-dark/30 transition-all duration-300"
                 >
                   <div className="flex items-center gap-2.5 border-b border-black/5 pb-2.5">
                     <div className="w-8 h-8 rounded-lg bg-cream border border-white flex items-center justify-center text-deep-teal shadow-clay-subtle">
@@ -122,7 +139,7 @@ export default function Experience() {
                 </motion.div>
               );
             })}
-          </div>
+          </motion.div>
 
         </motion.div>
 

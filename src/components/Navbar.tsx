@@ -17,7 +17,7 @@ export default function Navbar() {
 
   // Track active section on scroll
   useEffect(() => {
-    const sections = ['about', 'education', 'experience', 'projects', 'skills', 'about-gallery', 'contact'];
+    const sections = ['about', 'about-gallery', 'education', 'experience', 'projects', 'skills', 'contact'];
     const observers = sections.map((id) => {
       const element = document.getElementById(id);
       if (!element) return null;
@@ -45,11 +45,11 @@ export default function Navbar() {
 
   const navLinks = [
     { name: 'Tentang', href: '#about' },
+    { name: 'Galeri & 3D', href: '#about-gallery' },
     { name: 'Pendidikan', href: '#education' },
     { name: 'Pengalaman', href: '#experience' },
     { name: 'Proyek', href: '#projects' },
     { name: 'Keahlian', href: '#skills' },
-    { name: 'Galeri', href: '#about-gallery' },
     { name: 'Kontak', href: '#contact' },
   ];
 

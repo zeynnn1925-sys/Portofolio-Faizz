@@ -1,6 +1,7 @@
 import React, { useState, ComponentType } from 'react';
 import { motion } from 'motion/react';
 import { ExternalLink, Github, Folder, Shield, Zap, Sparkles, Database, Mail } from 'lucide-react';
+import { headerVariants, cardVariants, staggerContainer, scrollViewport, smoothEase } from '../lib/animations';
 
 interface Project {
   id: number;
@@ -129,10 +130,10 @@ export default function Projects() {
         
         {/* Section Title */}
         <motion.div 
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.5, ease: [0.25, 1, 0.5, 1] }}
+          variants={headerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={scrollViewport}
           className="mb-16 flex flex-col md:flex-row md:items-end justify-between gap-6"
         >
           <div>
@@ -140,7 +141,13 @@ export default function Projects() {
             <h2 className="text-3xl md:text-5xl font-display font-medium text-ink-navy tracking-tight leading-none">
               Katalog <span className="text-amber-clay-dark italic font-semibold">Proyek</span>
             </h2>
-            <div className="h-[3px] w-16 bg-amber-clay rounded-full mt-3"></div>
+            <motion.div 
+              initial={{ scaleX: 0 }}
+              whileInView={{ scaleX: 1 }}
+              viewport={scrollViewport}
+              transition={{ duration: 0.6, delay: 0.2, ease: smoothEase }}
+              className="h-[3px] w-16 bg-amber-clay rounded-full mt-3 origin-left"
+            />
           </div>
           <p className="text-ink-soft font-sans font-medium text-xs sm:text-sm max-w-sm leading-relaxed">
             Ekosistem solusi kearsipan pintar OPMAZ, sistem manajemen portal pendidikan terpadu, serta aplikasi produktivitas personal.
@@ -149,10 +156,10 @@ export default function Projects() {
 
         {/* LIFEFLOW - FEATURED WORK IN CLAYMORPHISM */}
         <motion.div 
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: 0.5, ease: [0.25, 1, 0.5, 1], delay: 0.1 }}
+          variants={cardVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={scrollViewport}
           className="mb-14 relative rounded-[30px] bg-cream border border-white shadow-clay-raised p-6 sm:p-8 md:p-10 overflow-hidden group transition-all duration-300 hover:shadow-clay-raised-hover"
         >
           {/* Card Header row */}
@@ -211,10 +218,16 @@ export default function Projects() {
                 LifeFlow adalah platform produktivitas dan manajemen keuangan pribadi all-in-one yang menghubungkan semua aspek penting kehidupan dalam satu ekosistem terintegrasi. Ketika catatan pengeluaran, rutinitas kebiasaan harian, agenda harian, dan pencapaian target personal Anda disatukan, Anda mendapatkan kejelasan absolut untuk melangkah maju.
               </p>
 
-              {/* Core Features Cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+              {/* Core Features Cards with Stagger Animation */}
+              <motion.div 
+                variants={staggerContainer(0.08, 0.2)}
+                initial="hidden"
+                whileInView="visible"
+                viewport={scrollViewport}
+                className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1"
+              >
                 
-                <div className="p-4 rounded-[16px] bg-bone-dark/20 border border-black/5 shadow-clay-inset hover:bg-bone-dark/30 transition-colors">
+                <motion.div variants={cardVariants} className="p-4 rounded-[16px] bg-bone-dark/20 border border-black/5 shadow-clay-inset hover:bg-bone-dark/30 transition-colors">
                   <div className="flex items-center gap-1.5 mb-1">
                     <span className="text-xs">💰</span>
                     <h5 className="text-[10px] font-bold font-sans text-ink-navy uppercase tracking-wider">AI Financial Advisor</h5>
@@ -222,9 +235,9 @@ export default function Projects() {
                   <p className="text-[10px] text-ink-soft font-semibold leading-relaxed">
                     Pencatatan pemasukan dan pengeluaran cerdas, dianalisis langsung oleh AI berbasis aturan budgeting 50/30/20.
                   </p>
-                </div>
+                </motion.div>
 
-                <div className="p-4 rounded-[16px] bg-bone-dark/20 border border-black/5 shadow-clay-inset hover:bg-bone-dark/30 transition-colors">
+                <motion.div variants={cardVariants} className="p-4 rounded-[16px] bg-bone-dark/20 border border-black/5 shadow-clay-inset hover:bg-bone-dark/30 transition-colors">
                   <div className="flex items-center gap-1.5 mb-1">
                     <span className="text-xs">🔥</span>
                     <h5 className="text-[10px] font-bold font-sans text-ink-navy uppercase tracking-wider">Habit & Streak System</h5>
@@ -232,9 +245,9 @@ export default function Projects() {
                   <p className="text-[10px] text-ink-soft font-semibold leading-relaxed">
                     Sistem gamifikasi konsisten dengan pelacak streak harian, perayaan milestone, serta target pencapaian adaptif.
                   </p>
-                </div>
+                </motion.div>
 
-                <div className="p-4 rounded-[16px] bg-bone-dark/20 border border-black/5 shadow-clay-inset hover:bg-bone-dark/30 transition-colors">
+                <motion.div variants={cardVariants} className="p-4 rounded-[16px] bg-bone-dark/20 border border-black/5 shadow-clay-inset hover:bg-bone-dark/30 transition-colors">
                   <div className="flex items-center gap-1.5 mb-1">
                     <span className="text-xs">✨</span>
                     <h5 className="text-[10px] font-bold font-sans text-ink-navy uppercase tracking-wider">AI Daily Planner</h5>
@@ -242,9 +255,9 @@ export default function Projects() {
                   <p className="text-[10px] text-ink-soft font-semibold leading-relaxed">
                     Satu tap instan untuk menyusun agenda harian optimal berbasis target harian personal Anda.
                   </p>
-                </div>
+                </motion.div>
 
-                <div className="p-4 rounded-[16px] bg-bone-dark/20 border border-black/5 shadow-clay-inset hover:bg-bone-dark/30 transition-colors">
+                <motion.div variants={cardVariants} className="p-4 rounded-[16px] bg-bone-dark/20 border border-black/5 shadow-clay-inset hover:bg-bone-dark/30 transition-colors">
                   <div className="flex items-center gap-1.5 mb-1">
                     <span className="text-xs">🎯</span>
                     <h5 className="text-[10px] font-bold font-sans text-ink-navy uppercase tracking-wider">Targets & Alerts</h5>
@@ -252,9 +265,9 @@ export default function Projects() {
                   <p className="text-[10px] text-ink-soft font-semibold leading-relaxed">
                     Ukur kemajuan di berbagai kategori (kesehatan, finansial, karir) didukung visualisasi persentase transparan.
                   </p>
-                </div>
+                </motion.div>
 
-              </div>
+              </motion.div>
 
             </div>
 
@@ -353,18 +366,21 @@ export default function Projects() {
         </motion.div>
 
         {/* Dynamic Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10">
-          {projects.map((project, idx) => {
+        <motion.div 
+          variants={staggerContainer(0.12, 0.1)}
+          initial="hidden"
+          whileInView="visible"
+          viewport={scrollViewport}
+          className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10"
+        >
+          {projects.map((project) => {
             const tilt = tiltCoords[project.id] || { rx: 0, ry: 0, active: false, mx: 50, my: 50 };
             const ProjectIcon = project.icon;
 
             return (
               <motion.div
                 key={project.id}
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-60px" }}
-                transition={{ duration: 0.5, ease: [0.25, 1, 0.5, 1], delay: 0.15 + idx * 0.1 }}
+                variants={cardVariants}
                 className="perspective-[1000px] h-full"
               >
                 <div
@@ -466,7 +482,7 @@ export default function Projects() {
               </motion.div>
             );
           })}
-        </div>
+        </motion.div>
 
 
 
