@@ -1,9 +1,11 @@
 import { useState, MouseEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import FilePreviewModal from './FilePreviewModal';
+import { NumberTicker } from './ui/NumberTicker';
+import { Marquee } from './ui/Marquee';
 import { 
   ChevronRight, FileText, FileSpreadsheet, Presentation, Sparkles, 
-  Atom, Code2, Braces, Wind, Database, Laptop
+  Atom, Code2, Braces, Wind, Database, Laptop, Award, CheckCircle, FileCheck
 } from 'lucide-react';
 import { headerVariants, cardVariants, staggerContainer, scrollViewport, smoothEase } from '../lib/animations';
 
@@ -13,6 +15,20 @@ export default function Skills() {
   // States to track 3D tilt coordinates relative to card size per card
   const [tiltCoords, setTiltCoords] = useState<Record<number, { rx: number; ry: number; active: boolean }>>({});
   const [hoveredFramework, setHoveredFramework] = useState<string | null>(null);
+
+  // Marquee stack items
+  const marqueeTechs = [
+    { name: "TypeScript", sub: "Strict Typing" },
+    { name: "React 19", sub: "Component Architecture" },
+    { name: "Tailwind CSS", sub: "Utility Design" },
+    { name: "Python", sub: "Data Automation" },
+    { name: "Three.js", sub: "3D Spatial Web" },
+    { name: "SQL Database", sub: "Relational Schema" },
+    { name: "Ms. Word", sub: "Mail Merge & TOC" },
+    { name: "Ms. Excel", sub: "VLOOKUP & Logika" },
+    { name: "Kearsipan OPMAZ", sub: "Tata Naskah Dinas" },
+    { name: "JavaScript ES6+", sub: "DOM & Async" },
+  ];
 
   const hardSkills = [
     {
@@ -120,10 +136,10 @@ export default function Skills() {
           initial="hidden"
           whileInView="visible"
           viewport={scrollViewport}
-          className="mb-16 md:mb-20 flex flex-col md:flex-row md:items-end justify-between gap-6"
+          className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6"
         >
           <div>
-            <span className="text-xs font-bold uppercase tracking-widest text-deep-teal font-mono block mb-2">KEAHLIAN UTAMA</span>
+            <span className="text-xs font-bold uppercase tracking-widest text-deep-teal font-mono block mb-2">KEAHLIAN UTAMA & STATISTIK</span>
             <h2 className="text-3xl md:text-5xl font-display font-medium text-ink-navy tracking-tight leading-none">
               Keahlian <span className="text-amber-clay-dark italic font-semibold">& Kompetensi</span>
             </h2>
@@ -136,9 +152,79 @@ export default function Skills() {
             />
           </div>
           <p className="text-ink-soft font-sans font-medium text-xs sm:text-sm max-w-sm leading-relaxed">
-            Terdiri atas kompetensi teknis di bidang administrasi perkantoran serta kecakapan komunikasi organisasi yang mendukung efisiensi kerja.
+            Menyatukan keahlian rekayasa perangkat lunak modern dengan akurasi administrasi kearsipan teruji di lapangan.
           </p>
         </motion.div>
+
+        {/* Number Ticker: Key Achievements Strip (200+ Dokumen, 30+ Rapat, 100% Perizinan) */}
+        <motion.div
+          variants={cardVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={scrollViewport}
+          className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12"
+        >
+          <div className="rounded-[22px] bg-cream border border-white p-5 shadow-clay-raised flex items-center gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-bone-dark/30 border border-black/5 flex items-center justify-center text-deep-teal shadow-clay-inset shrink-0">
+              <FileCheck size={20} />
+            </div>
+            <div>
+              <div className="text-2xl sm:text-3xl font-mono font-black text-ink-navy">
+                <NumberTicker value={200} suffix="+" />
+              </div>
+              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-amber-clay-dark block">
+                Dokumen & Berkas Arsip
+              </span>
+              <p className="text-[10px] text-ink-soft font-sans mt-0.5">Surat resmi dan izin santri tertata rapi.</p>
+            </div>
+          </div>
+
+          <div className="rounded-[22px] bg-cream border border-white p-5 shadow-clay-raised flex items-center gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-bone-dark/30 border border-black/5 flex items-center justify-center text-amber-clay-dark shadow-clay-inset shrink-0">
+              <Award size={20} />
+            </div>
+            <div>
+              <div className="text-2xl sm:text-3xl font-mono font-black text-ink-navy">
+                <NumberTicker value={30} suffix="+" />
+              </div>
+              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-amber-clay-dark block">
+                Rapat Terkoordinasi
+              </span>
+              <p className="text-[10px] text-ink-soft font-sans mt-0.5">Notula tersinkronisasi antardivisi OPMAZ.</p>
+            </div>
+          </div>
+
+          <div className="rounded-[22px] bg-cream border border-white p-5 shadow-clay-raised flex items-center gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-bone-dark/30 border border-black/5 flex items-center justify-center text-deep-teal shadow-clay-inset shrink-0">
+              <CheckCircle size={20} />
+            </div>
+            <div>
+              <div className="text-2xl sm:text-3xl font-mono font-black text-ink-navy">
+                <NumberTicker value={100} suffix="%" />
+              </div>
+              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-amber-clay-dark block">
+                Perizinan Tepat Waktu
+              </span>
+              <p className="text-[10px] text-ink-soft font-sans mt-0.5">Komunikasi aktif dan kepatuhan aturan lembaga.</p>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Marquee Logo Stack (Continuous Tech & Tool Strip) */}
+        <div className="mb-14 overflow-hidden rounded-[22px] bg-cream border border-white p-3 shadow-clay-inset">
+          <Marquee speed={28}>
+            {marqueeTechs.map((tech, idx) => (
+              <div
+                key={idx}
+                className="flex items-center gap-2.5 px-4 py-2 rounded-xl bg-bone-dark/30 border border-black/5 shadow-clay-subtle shrink-0"
+              >
+                <span className="w-2 h-2 rounded-full bg-deep-teal" />
+                <span className="text-xs font-sans font-bold text-ink-navy">{tech.name}</span>
+                <span className="text-[9px] font-mono text-ink-soft">({tech.sub})</span>
+              </div>
+            ))}
+          </Marquee>
+        </div>
 
         {/* Centered Grid Layout: Hard Skills */}
         <div className="max-w-6xl mx-auto">

@@ -1,6 +1,7 @@
 import React, { useState, ComponentType } from 'react';
-import { motion } from 'motion/react';
-import { ExternalLink, Github, Folder, Shield, Zap, Sparkles, Database, Mail } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
+import { ExternalLink, Github, Folder, Shield, Zap, Sparkles, Database, Mail, X, FileText, Download } from 'lucide-react';
+import FilePreviewModal from './FilePreviewModal';
 import { headerVariants, cardVariants, staggerContainer, scrollViewport, smoothEase } from '../lib/animations';
 
 interface Project {
@@ -14,10 +15,13 @@ interface Project {
   icon: ComponentType<any>;
   metric: { value: string; label: string };
   tags: string[];
+  proofDoc?: { url: string; title: string };
 }
 
 export default function Projects() {
   const [tiltCoords, setTiltCoords] = useState<Record<number, { rx: number; ry: number; active: boolean; mx: number; my: number }>>({});
+  const [selectedModalProject, setSelectedModalProject] = useState<Project | null>(null);
+  const [previewDoc, setPreviewDoc] = useState<{ url: string; title: string } | null>(null);
 
   const projects: Project[] = [
     {
@@ -34,7 +38,11 @@ export default function Projects() {
       github: "https://github.com/zeynnn1925-sys/opmaz-admin-hub",
       icon: Database,
       metric: { value: "200+", label: "Arsip Surat Digital" },
-      tags: ["React Hub", "Excel API", "DocuVault"]
+      tags: ["React Hub", "Excel API", "DocuVault"],
+      proofDoc: {
+        url: "/laporan-pekanan-osis.docx",
+        title: "Draf Dokumen Kearsipan OPMAZ (.docx)"
+      }
     },
     {
       id: 2,
@@ -50,7 +58,11 @@ export default function Projects() {
       github: "https://github.com/zeynnn1925-sys/al-zaytun-portal",
       icon: Shield,
       metric: { value: "100%", label: "Perizinan Tepat Waktu" },
-      tags: ["Web Portal", "Data Entry", "Secure Log"]
+      tags: ["Web Portal", "Data Entry", "Secure Log"],
+      proofDoc: {
+        url: "/presensi-kehadiran.xlsx",
+        title: "Tabel Rekapitulasi Presensi Kehadiran (.xlsx)"
+      }
     },
     {
       id: 3,
@@ -66,7 +78,11 @@ export default function Projects() {
       github: "https://github.com/zeynnn1925-sys/mail-merge-helper",
       icon: Mail,
       metric: { value: "30+", label: "Rapat Terotomasi" },
-      tags: ["Mail Merge", "Automation", "PDF Builder"]
+      tags: ["Mail Merge", "Automation", "PDF Builder"],
+      proofDoc: {
+        url: "/proposal-gema-alquran.docx",
+        title: "Proposal & Format Persuratan Resmi (.docx)"
+      }
     },
     {
       id: 4,
@@ -391,7 +407,7 @@ export default function Projects() {
                     transition: tilt.active ? 'none' : 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
                   }}
                   className="relative flex flex-col justify-between h-full rounded-[28px] bg-cream border border-white p-6 sm:p-8 cursor-pointer group shadow-clay-raised hover:shadow-clay-raised-hover hover:-translate-y-1 transition-all duration-300"
-                  onClick={() => window.open(project.link, '_blank', 'noopener,noreferrer')}
+                  onClick={() => setSelectedModalProject(project)}
                 >
                   
                   {/* Top classification row */}
@@ -484,7 +500,116 @@ export default function Projects() {
           })}
         </motion.div>
 
+        {/* ========================================================
+            ANIMATED PROJECT DETAIL MODAL (Aceternity Animated Modal style)
+            ======================================================== */}
+        <AnimatePresence>
+          {selectedModalProject && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+              onClick={() => setSelectedModalProject(null)}
+            >
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 16 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 16 }}
+                transition={{ duration: 0.3, ease: 'easeOut' }}
+                onClick={(e) => e.stopPropagation()}
+                className="w-full max-w-2xl bg-cream border border-white rounded-[28px] shadow-clay-raised p-6 sm:p-8 overflow-hidden relative"
+              >
+                {/* Close Button */}
+                <button
+                  onClick={() => setSelectedModalProject(null)}
+                  className="absolute top-5 right-5 w-8 h-8 rounded-xl bg-bone-dark/30 hover:bg-bone-dark/50 border border-black/5 flex items-center justify-center text-ink-navy shadow-clay-btn transition-colors"
+                >
+                  <X size={15} />
+                </button>
 
+                {/* Modal Header */}
+                <div className="mb-4 pr-10">
+                  <span className="text-[9px] font-mono font-bold text-amber-clay-dark uppercase tracking-widest block mb-1">
+                    {selectedModalProject.category}
+                  </span>
+                  <h3 className="text-2xl sm:text-3xl font-display font-bold text-ink-navy">
+                    {selectedModalProject.title}
+                  </h3>
+                  <div className="flex flex-wrap items-center gap-1.5 mt-2">
+                    {selectedModalProject.tags.map((tag) => (
+                      <span key={tag} className="text-[9px] font-mono font-bold px-2 py-0.5 rounded bg-bone-dark/30 border border-black/5 text-deep-teal shadow-clay-inset">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <p className="text-xs sm:text-sm text-ink-soft font-sans font-medium leading-relaxed mb-6">
+                  {selectedModalProject.description}
+                </p>
+
+                {/* Highlights */}
+                <div className="mb-6 bg-bone-dark/20 p-4 rounded-2xl border border-black/5 shadow-clay-inset">
+                  <h5 className="text-[10px] font-mono font-bold text-ink-navy uppercase tracking-wider mb-2.5">
+                    Solusi Kunci & Arsitektur:
+                  </h5>
+                  <ul className="space-y-2">
+                    {selectedModalProject.highlights.map((h, i) => (
+                      <li key={i} className="flex items-center gap-2 text-xs font-sans font-semibold text-ink-navy">
+                        <span className="w-1.5 h-1.5 rounded-full bg-amber-clay shrink-0" />
+                        <span>{h}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Action buttons */}
+                <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-black/5">
+                  <div className="flex items-center gap-2">
+                    <a
+                      href={selectedModalProject.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-4 py-2 rounded-xl bg-amber-clay text-ink-navy text-xs font-sans font-bold border border-white shadow-clay-btn hover:bg-amber-clay/90 active:scale-95 transition-all inline-flex items-center gap-1.5"
+                    >
+                      <span>Lihat Live Demo</span>
+                      <ExternalLink size={13} />
+                    </a>
+                    <a
+                      href={selectedModalProject.github}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-4 py-2 rounded-xl bg-cream text-ink-navy text-xs font-sans font-bold border border-white shadow-clay-btn hover:shadow-clay-inset active:scale-95 transition-all inline-flex items-center gap-1.5"
+                    >
+                      <Github size={13} />
+                      <span>Repository</span>
+                    </a>
+                  </div>
+
+                  {/* Document preview button if available */}
+                  {selectedModalProject.proofDoc && (
+                    <button
+                      onClick={() => setPreviewDoc(selectedModalProject.proofDoc!)}
+                      className="px-3.5 py-2 rounded-xl bg-deep-teal text-white text-xs font-sans font-bold border border-deep-teal shadow-clay-btn hover:bg-deep-teal/90 active:scale-95 transition-all inline-flex items-center gap-1.5"
+                    >
+                      <FileText size={13} />
+                      <span>Pratinjau Dokumen Asli</span>
+                    </button>
+                  )}
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* File Preview Modal for Documents */}
+        <FilePreviewModal
+          isOpen={!!previewDoc}
+          onClose={() => setPreviewDoc(null)}
+          fileUrl={previewDoc?.url || ''}
+          title={previewDoc?.title || ''}
+        />
 
       </div>
     </section>

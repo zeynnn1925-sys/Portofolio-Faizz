@@ -1,11 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Menu, X, Github, Instagram } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { Github, Instagram, Menu, X, ArrowUpRight } from 'lucide-react';
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState('#about');
 
   useEffect(() => {
     const handleScroll = () => {
@@ -15,178 +13,107 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Track active section on scroll
-  useEffect(() => {
-    const sections = ['about', 'about-gallery', 'education', 'experience', 'projects', 'skills', 'contact'];
-    const observers = sections.map((id) => {
-      const element = document.getElementById(id);
-      if (!element) return null;
-
-      const observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              setActiveSection(`#${id}`);
-            }
-          });
-        },
-        { threshold: 0.2, rootMargin: '-10% 0px -70% 0px' }
-      );
-      observer.observe(element);
-      return { observer, element };
-    });
-
-    return () => {
-      observers.forEach((obs) => {
-        if (obs) obs.observer.unobserve(obs.element);
-      });
-    };
-  }, []);
-
   const navLinks = [
+    { name: 'Kamar 3D', href: '#room-3d' },
     { name: 'Tentang', href: '#about' },
-    { name: 'Galeri & 3D', href: '#about-gallery' },
-    { name: 'Pendidikan', href: '#education' },
-    { name: 'Pengalaman', href: '#experience' },
     { name: 'Proyek', href: '#projects' },
     { name: 'Keahlian', href: '#skills' },
+    { name: 'Pengalaman', href: '#experience' },
     { name: 'Kontak', href: '#contact' },
   ];
 
   return (
-    <>
-      <header
-        className={`fixed top-4 left-1/2 -translate-x-1/2 z-[40] w-[94%] max-w-6xl transition-all duration-500 ease-out rounded-2xl ${
-          isScrolled 
-            ? 'py-2 px-5 bg-cream/95 backdrop-blur-md border border-white/60 shadow-clay-raised' 
-            : 'py-4 px-6 bg-transparent border border-transparent shadow-none'
-        }`}
-      >
-        <div className="flex items-center justify-between">
-          <a href="#" className="flex items-center gap-2.5 group">
-            <div className="w-9 h-9 rounded-xl overflow-hidden border border-white/80 bg-bone-dark/50 flex items-center justify-center shadow-clay-subtle group-hover:scale-105 transition-transform duration-300">
-              <img 
-                src="/FAVICON.png" 
-                alt="FAEEZZ Logo" 
-                className="w-full h-full object-cover"
-                referrerPolicy="no-referrer" 
-              />
-            </div>
-            <span className="text-lg font-display font-bold uppercase tracking-widest text-ink-navy group-hover:text-amber-clay transition-colors duration-300">
-              FAEEZZ<span className="text-amber-clay font-sans">.</span>
+    <header
+      className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
+        isScrolled
+          ? 'bg-cream/95 backdrop-blur-md border-b border-black/5 shadow-clay-subtle py-3'
+          : 'bg-transparent border-b border-transparent py-4'
+      }`}
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+        
+        {/* Brand identity */}
+        <a href="#room-3d" className="flex items-center gap-3 group">
+          <div className="w-8 h-8 rounded-xl overflow-hidden border border-white bg-cream flex items-center justify-center shadow-clay-subtle">
+            <img 
+              src="/FAVICON.png" 
+              alt="Logo FAEEZZ" 
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <div className="flex flex-col text-left">
+            <span className="text-base font-display font-bold tracking-tight text-ink-navy group-hover:text-amber-clay-dark transition-colors">
+              Muhammad Faiz Dzahin
             </span>
-          </a>
+            <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-deep-teal">
+              Web Developer & Pembangun Sistem
+            </span>
+          </div>
+        </a>
 
-          {/* Desktop Nav as Tab Binder */}
-          <nav className="hidden lg:flex items-center gap-4">
-            <div className="flex items-center p-1 bg-bone-dark/30 rounded-[18px] border border-black/5 shadow-clay-inset">
-              {navLinks.map((link) => {
-                const isActive = activeSection === link.href;
-                return (
-                  <a 
-                    key={link.name}
-                    href={link.href} 
-                    className={`px-4 py-2 rounded-xl text-xs font-sans font-semibold tracking-wide transition-all duration-300 relative ${
-                      isActive 
-                        ? 'text-ink-navy bg-cream shadow-clay-raised font-bold border border-white/50' 
-                        : 'text-ink-soft hover:text-ink-navy'
-                    }`}
-                  >
-                    {link.name}
-                  </a>
-                );
-              })}
-            </div>
-            
-            <div className="h-5 w-px bg-ink-navy/10 mx-2"></div>
-            
-            <div className="flex items-center gap-2">
-              <a 
-                href="https://github.com/zeynnn1925-sys" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="w-9 h-9 rounded-xl border border-white/80 bg-cream flex items-center justify-center shadow-clay-subtle hover:shadow-clay-inset text-ink-navy hover:text-amber-clay active:scale-95 transition-all duration-300"
-                title="Github"
-              >
-                <Github size={14} />
-              </a>
-              <a 
-                href="https://www.instagram.com/mhmmdfaizdzhn._/" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="w-9 h-9 rounded-xl border border-white/80 bg-cream flex items-center justify-center shadow-clay-subtle hover:shadow-clay-inset text-ink-navy hover:text-amber-clay active:scale-95 transition-all duration-300"
-                title="Instagram"
-              >
-                <Instagram size={14} />
-              </a>
-            </div>
-          </nav>
+        {/* Clean desktop links with border hover (BUKAN pill di tengah) */}
+        <nav className="hidden md:flex items-center gap-6">
+          {navLinks.map((link) => (
+            <a
+              key={link.name}
+              href={link.href}
+              className="text-xs font-sans font-bold text-ink-soft hover:text-ink-navy tracking-wide transition-colors py-1 relative group/link"
+            >
+              {link.name}
+              <span className="absolute bottom-0 left-0 w-0 h-[2px] bg-amber-clay group-hover/link:w-full transition-all duration-200" />
+            </a>
+          ))}
 
-          {/* Mobile Toggle */}
-          <button
-            className="lg:hidden p-2 rounded-xl bg-cream/80 border border-white/60 shadow-clay-subtle text-ink-navy hover:text-amber-clay active:scale-95 transition-all"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-label="Toggle Menu"
-          >
-            {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
-          </button>
+          <div className="h-4 w-px bg-black/10 mx-1" />
+
+          {/* Social icons */}
+          <div className="flex items-center gap-2">
+            <a
+              href="https://github.com/zeynnn1925-sys"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-8 h-8 rounded-xl bg-cream border border-white text-ink-navy hover:text-amber-clay-dark flex items-center justify-center shadow-clay-btn transition-transform active:scale-95"
+              title="GitHub"
+            >
+              <Github size={14} />
+            </a>
+            <a
+              href="https://www.instagram.com/mhmmdfaizdzhn._/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-8 h-8 rounded-xl bg-cream border border-white text-ink-navy hover:text-amber-clay-dark flex items-center justify-center shadow-clay-btn transition-transform active:scale-95"
+              title="Instagram"
+            >
+              <Instagram size={14} />
+            </a>
+          </div>
+        </nav>
+
+        {/* Mobile menu trigger */}
+        <button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className="md:hidden p-2 rounded-xl bg-cream border border-white text-ink-navy shadow-clay-btn"
+          aria-label="Menu"
+        >
+          {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
+        </button>
+      </div>
+
+      {/* Mobile drawer */}
+      {mobileMenuOpen && (
+        <div className="md:hidden bg-cream border-b border-black/5 p-4 space-y-2 shadow-clay-raised">
+          {navLinks.map((link) => (
+            <a
+              key={link.name}
+              href={link.href}
+              onClick={() => setMobileMenuOpen(false)}
+              className="block px-3 py-2 rounded-xl text-xs font-sans font-bold text-ink-navy hover:bg-bone-dark/30 transition-colors"
+            >
+              {link.name}
+            </a>
+          ))}
         </div>
-      </header>
-
-      {/* Mobile Nav Menu */}
-      <AnimatePresence>
-        {mobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: -20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: -20 }}
-            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed top-20 left-1/2 -translate-x-1/2 w-[94%] z-[39] bg-cream border border-white/80 rounded-2xl shadow-clay-raised lg:hidden overflow-hidden"
-          >
-            <div className="p-6 flex flex-col gap-6">
-              <div className="flex flex-col gap-2 p-1.5 bg-bone-dark/20 rounded-xl shadow-clay-inset">
-                {navLinks.map((link) => {
-                  const isActive = activeSection === link.href;
-                  return (
-                    <a
-                      key={link.name}
-                      href={link.href}
-                      className={`block text-center py-2.5 rounded-lg text-xs font-sans font-semibold tracking-wider uppercase transition-all ${
-                        isActive 
-                          ? 'bg-cream text-ink-navy shadow-clay-subtle font-bold border border-white/40' 
-                          : 'text-ink-soft hover:text-ink-navy'
-                      }`}
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      {link.name}
-                    </a>
-                  );
-                })}
-              </div>
-              
-              <div className="flex justify-center gap-4 pt-4 border-t border-black/5">
-                <a 
-                  href="https://github.com/zeynnn1925-sys" 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="w-10 h-10 rounded-xl border border-white/80 bg-cream flex items-center justify-center shadow-clay-subtle text-ink-navy hover:text-amber-clay transition-all"
-                >
-                  <Github size={16} />
-                </a>
-                <a 
-                  href="https://www.instagram.com/mhmmdfaizdzhn._/" 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="w-10 h-10 rounded-xl border border-white/80 bg-cream flex items-center justify-center shadow-clay-subtle text-ink-navy hover:text-amber-clay transition-all"
-                >
-                  <Instagram size={16} />
-                </a>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </>
+      )}
+    </header>
   );
 }
-

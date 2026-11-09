@@ -4,17 +4,8 @@
  */
 
 import { useEffect, useState } from 'react';
-import { motion, useScroll, useSpring } from 'motion/react';
 import CustomCursor from './components/CustomCursor';
-import Navbar from './components/Navbar';
-import Hero from './components/Hero';
-import About from './components/About';
-import Education from './components/Education';
-import Experience from './components/Experience';
-import Projects from './components/Projects';
-import Skills from './components/Skills';
-import Contact from './components/Contact';
-import Footer from './components/Footer';
+import { RoomExperience } from './room/RoomExperience';
 import NotFound from './components/NotFound';
 
 export default function App() {
@@ -45,7 +36,6 @@ export default function App() {
     window.addEventListener('popstate', handleLocationChange);
     window.addEventListener('hashchange', handleLocationChange);
     
-    // Initial check in case of rendering delay
     handleLocationChange();
 
     return () => {
@@ -60,37 +50,17 @@ export default function App() {
     setPath('home');
   };
 
-  const { scrollYProgress } = useScroll();
-  const scaleX = useSpring(scrollYProgress, {
-    stiffness: 120,
-    damping: 28,
-    restDelta: 0.001
-  });
-
   return (
-    <div className="min-h-screen bg-bone-light select-text selection:bg-amber-clay selection:text-ink-navy">
+    <div className="h-screen w-screen overflow-hidden bg-bone-light select-text selection:bg-amber-clay selection:text-ink-navy">
       <CustomCursor />
-      <motion.div
-        style={{ scaleX }}
-        className="fixed top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-deep-teal via-amber-clay to-amber-clay-dark origin-left z-[100] pointer-events-none"
-      />
       {path === 'home' ? (
-        <>
-          <Navbar />
-          <main>
-            <Hero />
-            <About />
-            <Education />
-            <Experience />
-            <Projects />
-            <Skills />
-            <Contact />
-          </main>
-          <Footer />
-        </>
+        <main className="w-full h-full relative overflow-hidden">
+          <RoomExperience />
+        </main>
       ) : (
         <NotFound onBackToHome={handleBackToHome} />
       )}
     </div>
   );
 }
+
