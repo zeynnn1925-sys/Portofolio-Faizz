@@ -9,25 +9,26 @@ interface LightingRigProps {
 export function LightingRig({ isNightMode, lowPowerMode }: LightingRigProps) {
   const dirLightRef = useRef<THREE.DirectionalLight>(null);
 
-  // Lighting tokens from DESIGN.md:
-  // lamp: #FFD27A, amber-clay: #E8A855, deep-teal: #2F5D5A, night: #15121A
-  const dayKeyColor = '#FFF5E4';
-  const nightKeyColor = '#94B4D6';
-  const warmHemiSky = isNightMode ? '#181C26' : '#F7EFE1';
-  const warmHemiGround = isNightMode ? '#0F1218' : '#E2D3BE';
+  // Clear, crisp studio illumination tokens:
+  // Daylight: crisp sunbeam + vibrant ambient illumination
+  // Night: deep moody room with bright spot focus on desk, window & neon
+  const dayKeyColor = '#FFFDF5';
+  const nightKeyColor = '#A0C2E8';
+  const warmHemiSky = isNightMode ? '#1C2232' : '#FFFFFF';
+  const warmHemiGround = isNightMode ? '#121620' : '#EAE3D4';
 
   return (
     <group>
-      {/* Ambient hemisphere light: Darker at night to accentuate desk & neon glows */}
+      {/* Ambient hemisphere light: Clear & luminous in day, atmospheric at night */}
       <hemisphereLight
-        args={[warmHemiSky, warmHemiGround, isNightMode ? 0.22 : 0.85]}
+        args={[warmHemiSky, warmHemiGround, isNightMode ? 0.35 : 1.15]}
       />
 
-      {/* Main directional key light with soft shadow map */}
+      {/* Main directional key light */}
       <directionalLight
         ref={dirLightRef}
-        position={[-3.5, 5.5, 4.0]}
-        intensity={isNightMode ? 0.15 : 1.15}
+        position={[-3.5, 6.0, 4.5]}
+        intensity={isNightMode ? 0.3 : 1.45}
         color={isNightMode ? nightKeyColor : dayKeyColor}
         castShadow={!lowPowerMode}
         shadow-mapSize-width={lowPowerMode ? 1024 : 2048}
@@ -41,33 +42,40 @@ export function LightingRig({ isNightMode, lowPowerMode }: LightingRigProps) {
         shadow-bias={-0.0004}
       />
 
-      {/* Desk SpotLight pointing down at the desk surface — powerful spotlight when night mode is on */}
+      {/* Soft Fill Light from the right to avoid murky corners */}
+      <directionalLight
+        position={[4.0, 3.5, 2.5]}
+        intensity={isNightMode ? 0.15 : 0.65}
+        color={isNightMode ? '#85A6CC' : '#FFF8EE'}
+      />
+
+      {/* Desk SpotLight pointing down at the desk surface */}
       <spotLight
         position={[0.2, 2.6, -2.2]}
         target-position={[0.2, 0.75, -2.4]}
-        intensity={isNightMode ? 3.8 : 0.6}
+        intensity={isNightMode ? 4.2 : 1.2}
         color="#FFD27A"
-        angle={Math.PI / 3.8}
-        penumbra={0.75}
-        distance={5.0}
+        angle={Math.PI / 3.6}
+        penumbra={0.7}
+        distance={5.5}
         decay={1.8}
         castShadow={!lowPowerMode}
       />
 
       {/* Desk lamp local point light */}
       <pointLight
-        position={[0.8, 1.35, -2.5]}
-        intensity={isNightMode ? 2.5 : 0.4}
-        distance={3.2}
+        position={[0.8, 1.4, -2.5]}
+        intensity={isNightMode ? 2.8 : 0.8}
+        distance={3.5}
         color="#FFD27A"
         decay={2}
       />
 
-      {/* Neon zeynn.dev backlight (glows prominently in night mode, dim in daylight) */}
+      {/* Neon zeynn.dev backlight */}
       <pointLight
-        position={[0, 2.85, -2.75]}
-        intensity={isNightMode ? 3.5 : 0.15}
-        distance={4.8}
+        position={[0, 2.9, -2.75]}
+        intensity={isNightMode ? 4.0 : 0.35}
+        distance={5.0}
         color="#E8A855"
         decay={1.8}
       />
@@ -75,9 +83,18 @@ export function LightingRig({ isNightMode, lowPowerMode }: LightingRigProps) {
       {/* Monitor screen glow */}
       <pointLight
         position={[1.6, 1.25, -2.35]}
-        intensity={isNightMode ? 1.2 : 0.4}
-        distance={2.2}
+        intensity={isNightMode ? 1.4 : 0.6}
+        distance={2.4}
         color="#4C8783"
+        decay={2}
+      />
+
+      {/* Bookshelf accent light to keep books crisp and clearly readable */}
+      <pointLight
+        position={[3.2, 2.0, -1.8]}
+        intensity={isNightMode ? 1.6 : 0.9}
+        distance={3.8}
+        color="#FFF6E5"
         decay={2}
       />
 
@@ -85,19 +102,19 @@ export function LightingRig({ isNightMode, lowPowerMode }: LightingRigProps) {
       {!lowPowerMode && (
         <pointLight
           position={[-3.9, 2.2, 1.5]}
-          intensity={isNightMode ? 1.8 : 0.5}
-          distance={4.0}
+          intensity={isNightMode ? 2.2 : 0.8}
+          distance={4.5}
           color="#FFD27A"
           decay={2}
         />
       )}
 
-      {/* Window moonlight fill */}
+      {/* Window light fill */}
       <pointLight
         position={[-2.8, 2.1, -2.8]}
-        intensity={isNightMode ? 1.2 : 0.4}
-        distance={5.0}
-        color={isNightMode ? '#7AA0D0' : '#FFDE9B'}
+        intensity={isNightMode ? 1.6 : 1.8}
+        distance={5.5}
+        color={isNightMode ? '#7AA0D0' : '#FFF2D4'}
         decay={2}
       />
     </group>

@@ -5,7 +5,7 @@ import {
   ExternalLink, ChevronRight, Layers, BookOpen, Monitor, 
   FolderArchive, Phone, User, Compass, Info, Maximize2, Minimize2,
   Terminal, Code2, Send, X, FileText, Download, Award, Shield, CheckCircle2,
-  Calendar, Clock, ShieldCheck, Database, Mail, Move
+  Calendar, Clock, ShieldCheck, Database, Mail, Move, Cpu, Check, FileCheck, TerminalSquare
 } from 'lucide-react';
 import { RoomCanvas } from './RoomCanvas';
 import { HOTSPOTS } from '../data/room';
@@ -18,12 +18,21 @@ export function RoomExperience() {
   const [activeHotspotId, setActiveHotspotId] = useState<string>('overview');
   const [selectedSkillBook, setSelectedSkillBook] = useState<SkillBook | null>(null);
 
+  // Floating System Information Card for Books
+  const [showSystemInfoCard, setShowSystemInfoCard] = useState<boolean>(false);
+  const [isNavCollapsed, setIsNavCollapsed] = useState<boolean>(false);
+  const [isHudCollapsed, setIsHudCollapsed] = useState<boolean>(false);
+
   const [activeModal, setActiveModal] = useState<
     'none' | 'about' | 'projects' | 'experience' | 'skills' | 'contact'
   >('none');
   const [previewDoc, setPreviewDoc] = useState<{ url: string; title: string } | null>(null);
 
-  const [isNightMode, setIsNightMode] = useState<boolean>(false);
+  // Inisialisasi otomatis sesuai waktu nyata (Malam: 18:00 - 05:59, Siang: 06:00 - 17:59)
+  const [isNightMode, setIsNightMode] = useState<boolean>(() => {
+    const hour = new Date().getHours();
+    return hour >= 18 || hour < 6;
+  });
   const [soundEnabled, setSoundEnabled] = useState<boolean>(false);
   const [morphProgress, setMorphProgress] = useState<number>(0);
   const [isMorphing, setIsMorphing] = useState<boolean>(false);
@@ -102,7 +111,9 @@ export function RoomExperience() {
         handleToggleLights();
       }
       if (e.key === 'Escape') {
-        if (activeModal !== 'none') {
+        if (showSystemInfoCard) {
+          setShowSystemInfoCard(false);
+        } else if (activeModal !== 'none') {
           setActiveModal('none');
         } else if (activeHotspotId !== 'overview') {
           handleSelectHotspot('overview');
@@ -111,7 +122,7 @@ export function RoomExperience() {
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isNightMode, activeModal, activeHotspotId]);
+  }, [isNightMode, activeModal, activeHotspotId, showSystemInfoCard]);
 
   const handleTriggerMorph = (toDigital?: boolean) => {
     const targetState = toDigital !== undefined ? toDigital : !isDigital;
@@ -158,6 +169,7 @@ export function RoomExperience() {
     setActiveHotspotId(id);
     if (id !== 'rak_buku') {
       setSelectedSkillBook(null);
+      setShowSystemInfoCard(false);
     }
 
     if (id === 'buku_laptop') {
@@ -171,9 +183,11 @@ export function RoomExperience() {
     }
   };
 
+  // Called when user clicks an individual book on the 3D bookshelf
   const handleSelectSkillBook = (book: SkillBook) => {
     setSelectedSkillBook(book);
     setActiveHotspotId('rak_buku');
+    setShowSystemInfoCard(true);
     soundSynth.playPaperRustle();
   };
 
@@ -246,11 +260,11 @@ export function RoomExperience() {
   const navItems = [
     { id: 'overview', label: 'Seluruh Kamar', icon: Compass, modalKey: 'none' },
     { id: 'poster', label: 'Tentang Saya', icon: User, modalKey: 'about' },
-    { id: 'buku_laptop', label: 'Momen Morph', icon: Sparkles, modalKey: 'none' },
+    { id: 'jendela', label: 'Jendela (Perumahan Asri)', icon: Sun, modalKey: 'none' },
     { id: 'monitor', label: 'Proyek Utama', icon: Monitor, modalKey: 'projects' },
     { id: 'lemari_server', label: 'Pengalaman & Arsip', icon: FolderArchive, modalKey: 'experience' },
     { id: 'sertifikat', label: 'Kertas Ketikan CV', icon: FileText, modalKey: 'experience' },
-    { id: 'rak_buku', label: 'Pustaka Keahlian', icon: BookOpen, modalKey: 'skills' },
+    { id: 'rak_buku', label: 'Pustaka Keahlian (Rak)', icon: BookOpen, modalKey: 'skills' },
     { id: 'telepon', label: 'Hubungi Saya', icon: Phone, modalKey: 'contact' },
   ];
 
@@ -359,39 +373,10 @@ export function RoomExperience() {
 
         {/* Quick Room Controls */}
         <div className="pointer-events-auto flex items-center gap-2">
-          {/* Morph Switch */}
-          <button
-            onClick={() => handleTriggerMorph()}
-            disabled={isMorphing}
-            className={`flex items-center gap-2 px-3.5 py-2 rounded-2xl text-xs font-sans font-bold border transition-all duration-300 shadow-clay-btn ${
-              isDigital
-                ? 'bg-deep-teal text-white border-deep-teal'
-                : 'bg-cream/95 text-ink-navy border-white hover:text-amber-clay-dark'
-            }`}
-            title="Transformasikan buku besar kasir ke laptop pengembang web"
-          >
-            <RefreshCw size={13} className={isMorphing ? 'animate-spin' : ''} />
-            <span className="hidden sm:inline">{isDigital ? 'Buku Besar (Analog)' : 'Digitalkan Buku Besar'}</span>
-          </button>
-
-          {/* Light Switch */}
-          <button
-            onClick={handleToggleLights}
-            className={`flex items-center gap-1.5 px-3 py-2 rounded-2xl text-xs font-sans font-bold border transition-all duration-300 shadow-clay-btn ${
-              isNightMode
-                ? 'bg-[#1E2330] text-amber-300 border-[#2B3242]'
-                : 'bg-cream/95 text-ink-navy border-white hover:text-amber-clay-dark'
-            }`}
-            title="Saklar lampu kamar (atau tekan tombol L)"
-          >
-            {isNightMode ? <Moon size={14} /> : <Sun size={14} className="text-amber-clay" />}
-            <span className="hidden sm:inline font-mono text-[10px]">[L]</span>
-          </button>
-
           {/* Audio Toggle */}
           <button
             onClick={handleToggleSound}
-            className={`p-2 rounded-2xl border transition-all duration-300 shadow-clay-btn ${
+            className={`p-2 rounded-2xl border transition-all duration-300 shadow-clay-btn cursor-pointer ${
               soundEnabled
                 ? 'bg-cream text-deep-teal border-white'
                 : 'bg-bone-dark/50 text-ink-soft border-black/5'
@@ -403,239 +388,443 @@ export function RoomExperience() {
         </div>
       </header>
 
-      {/* Drag Camera Guidance Badge */}
-      <div className="absolute top-20 left-1/2 -translate-x-1/2 z-10 pointer-events-none">
-        <div className="bg-cream/80 backdrop-blur-sm border border-white/80 rounded-full px-3 py-1 shadow-clay-subtle flex items-center gap-1.5 text-[9.5px] font-mono text-ink-soft">
-          <Move size={11} className="text-amber-clay-dark" />
-          <span>Klik & geser mouse untuk melihat sekeliling kamar 360°</span>
-        </div>
-      </div>
-
       {/* ========================================================
-          SIDEBAR / DOCK: Interactive Hotspot Navigation
+          SIDEBAR / DOCK: Interactive Hotspot Navigation (ULTRA-COMPACT)
           ======================================================== */}
-      <aside className="absolute bottom-6 left-4 sm:left-6 z-20 pointer-events-none max-w-[280px] sm:max-w-[320px]">
-        <div className="pointer-events-auto bg-cream/95 backdrop-blur-md border border-white/80 rounded-[24px] shadow-clay-raised p-3">
-          <div className="flex items-center justify-between px-2 mb-2">
-            <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-ink-soft">
-              PANDUAN INTERAKTIF KAMAR:
-            </span>
-            {activeHotspotId !== 'overview' && (
-              <button
-                onClick={() => handleSelectHotspot('overview')}
-                className="text-[9px] font-mono font-bold text-amber-clay-dark hover:underline"
-              >
-                Lihat Seluruh Kamar (Esc)
-              </button>
-            )}
-          </div>
-
-          <nav className="flex flex-col space-y-1">
-            {navItems.map((item) => {
-              const isActive = activeHotspotId === item.id;
-              const Icon = item.icon;
-              return (
+      <aside className="absolute bottom-5 left-4 sm:left-5 z-20 pointer-events-none max-w-[195px] w-full">
+        {isNavCollapsed ? (
+          <button
+            onClick={() => setIsNavCollapsed(false)}
+            className="pointer-events-auto bg-cream/95 backdrop-blur-md border border-white rounded-xl px-2.5 py-1.5 shadow-clay-subtle flex items-center gap-1.5 text-[10px] font-mono text-ink-navy font-bold hover:bg-cream transition-all cursor-pointer"
+            title="Buka Panduan Kamar"
+          >
+            <Compass size={12} className="text-deep-teal" />
+            <span>Panduan ({navItems.length})</span>
+            <span className="text-[9px] text-amber-clay-dark ml-0.5">▲</span>
+          </button>
+        ) : (
+          <div className="pointer-events-auto bg-cream/90 backdrop-blur-md border border-white/80 rounded-[18px] shadow-clay-subtle p-2">
+            <div className="flex items-center justify-between px-1 mb-1">
+              <span className="text-[8px] font-mono font-bold uppercase tracking-wider text-ink-soft">
+                PANDUAN KAMAR
+              </span>
+              <div className="flex items-center gap-1.5">
+                {activeHotspotId !== 'overview' && (
+                  <button
+                    onClick={() => handleSelectHotspot('overview')}
+                    className="text-[8px] font-mono font-bold text-amber-clay-dark hover:underline cursor-pointer"
+                  >
+                    Reset
+                  </button>
+                )}
                 <button
-                  key={item.id}
-                  onClick={() => {
-                    handleSelectHotspot(item.id);
-                    if (item.modalKey !== 'none') {
-                      setActiveModal(item.modalKey as any);
-                    }
-                  }}
-                  className={`flex items-center justify-between px-3 py-2 rounded-xl text-left transition-all duration-200 ${
-                    isActive
-                      ? 'border-l-4 border-amber-clay bg-bone-dark/40 text-ink-navy font-bold shadow-clay-inset pl-2'
-                      : 'border-l-4 border-transparent hover:bg-bone-dark/20 text-ink-soft hover:text-ink-navy font-medium'
-                  }`}
+                  onClick={() => setIsNavCollapsed(true)}
+                  className="w-4 h-4 rounded text-ink-soft hover:text-ink-navy flex items-center justify-center cursor-pointer"
+                  title="Perkecil menu"
                 >
-                  <div className="flex items-center gap-2">
-                    <Icon size={13} className={isActive ? 'text-amber-clay-dark' : 'text-deep-teal'} />
-                    <span className="text-xs font-sans">{item.label}</span>
-                  </div>
-                  {item.modalKey !== 'none' ? (
-                    <span className="text-[9px] font-mono font-bold text-deep-teal">Buka ›</span>
-                  ) : (
-                    <span className="text-[9px] font-mono text-ink-soft">
-                      {isActive ? '●' : '›'}
-                    </span>
-                  )}
+                  <Minimize2 size={10} />
                 </button>
-              );
-            })}
-          </nav>
-        </div>
+              </div>
+            </div>
+
+            <nav className="flex flex-col space-y-0.5">
+              {navItems.map((item) => {
+                const isActive = activeHotspotId === item.id;
+                const Icon = item.icon;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => {
+                      handleSelectHotspot(item.id);
+                      if (item.modalKey !== 'none') {
+                        setActiveModal(item.modalKey as any);
+                      }
+                    }}
+                    className={`flex items-center justify-between px-2 py-1 rounded-md text-left transition-all duration-150 cursor-pointer ${
+                      isActive
+                        ? 'border-l-2 border-amber-clay bg-bone-dark/40 text-ink-navy font-bold shadow-clay-inset pl-1.5'
+                        : 'border-l-2 border-transparent hover:bg-bone-dark/20 text-ink-soft hover:text-ink-navy font-medium'
+                    }`}
+                  >
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <Icon size={10} className={isActive ? 'text-amber-clay-dark shrink-0' : 'text-deep-teal shrink-0'} />
+                      <span className="text-[10px] font-sans leading-none truncate">{item.label}</span>
+                    </div>
+                    {item.modalKey !== 'none' ? (
+                      <span className="text-[7px] font-mono font-bold text-deep-teal shrink-0 ml-1">Buka ›</span>
+                    ) : (
+                      <span className="text-[7px] font-mono text-ink-soft shrink-0 ml-1">
+                        {isActive ? '●' : '›'}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </nav>
+          </div>
+        )}
       </aside>
 
       {/* ========================================================
-          BOTTOM-RIGHT HUD: Hotspot Card / Detailed Skill Book Card
+          FLOATING 'SYSTEM INFORMATION' CARD ON BOOK CLICK
           ======================================================== */}
-      <aside className="absolute bottom-6 right-4 sm:right-6 z-20 pointer-events-none max-w-[340px] sm:max-w-[400px] w-full">
-        <div className="pointer-events-auto bg-cream/95 backdrop-blur-md border border-white/80 rounded-[24px] shadow-clay-raised p-4 space-y-3">
-          
-          <div className="flex items-center justify-between">
-            <span className="text-[9px] font-mono font-extrabold uppercase tracking-widest text-amber-clay-dark">
-              {selectedSkillBook ? `BUKU RAK: ${selectedSkillBook.category}` : '// FOKUS KAMAR AKTIF'}
-            </span>
-            <div className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-[8.5px] font-mono text-ink-soft font-bold uppercase">
-                {activeHotspotId}
-              </span>
-            </div>
-          </div>
-
-          {/* Skill Book Card Header with Logo */}
-          {selectedSkillBook ? (
-            <div className="flex items-start gap-3.5 bg-bone-dark/20 p-2.5 rounded-2xl border border-black/5 shadow-clay-inset">
-              <div className="w-12 h-12 rounded-xl bg-cream border border-white p-2 flex items-center justify-center shadow-clay-subtle shrink-0">
-                <img
-                  src={selectedSkillBook.techLogo}
-                  alt={selectedSkillBook.name}
-                  className="w-full h-full object-contain"
-                  onError={(e) => {
-                    // Fallback to text icon if network error
-                    (e.target as HTMLElement).style.display = 'none';
-                  }}
-                />
-              </div>
-              <div className="min-w-0 flex-1">
-                <h3 className="text-base font-display font-bold text-ink-navy truncate leading-tight">
-                  {selectedSkillBook.name}
-                </h3>
-                <p className="text-xs font-sans text-deep-teal font-semibold">
-                  {selectedSkillBook.subtitle}
-                </p>
-                <div className="flex items-center gap-2 mt-1">
-                  <span className="text-[9px] font-mono font-bold bg-amber-clay/20 text-amber-clay-dark px-2 py-0.5 rounded">
-                    Tingkat: {selectedSkillBook.level}
-                  </span>
-                  <span className="text-[9px] font-mono font-bold text-ink-soft">
-                    {selectedSkillBook.proficiency}
+      <AnimatePresence>
+        {showSystemInfoCard && selectedSkillBook && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 w-full max-w-md p-4 sm:p-0 pointer-events-none"
+          >
+            <div className="pointer-events-auto bg-cream/95 backdrop-blur-md border-2 border-white rounded-[26px] shadow-clay-raised p-6 relative overflow-hidden text-left">
+              
+              {/* Header with OS / System Info styling */}
+              <div className="flex items-center justify-between pb-3.5 border-b border-black/5 mb-4">
+                <div className="flex items-center gap-2">
+                  <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+                  <span className="text-[10px] font-mono font-extrabold uppercase tracking-widest text-deep-teal">
+                    SYSTEM INFORMATION // SKILL MODULE
                   </span>
                 </div>
-              </div>
-            </div>
-          ) : (
-            <div>
-              <h3 className="text-base sm:text-lg font-display font-bold text-ink-navy leading-tight">
-                {activeCopy.title}
-              </h3>
-              <p className="text-xs font-sans text-deep-teal font-semibold mt-0.5">
-                {activeCopy.subtitle}
-              </p>
-            </div>
-          )}
-
-          <div className="text-xs text-ink-soft font-sans font-medium leading-relaxed max-h-24 overflow-y-auto pr-1">
-            {selectedSkillBook ? (
-              <p>{selectedSkillBook.description}</p>
-            ) : (
-              <p>{activeCopy.paragraphs[0]}</p>
-            )}
-          </div>
-
-          {/* Interactive Live Terminal input when monitor is focused */}
-          {activeHotspotId === 'monitor' && (
-            <div className="pt-1">
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  handleExecuteTerminalCommand(terminalInput);
-                }}
-                className="flex items-center gap-1.5 bg-bone-dark/30 p-1.5 rounded-xl border border-black/5 shadow-clay-inset"
-              >
-                <span className="text-deep-teal font-mono text-xs font-bold pl-1">➜</span>
-                <input
-                  type="text"
-                  value={terminalInput}
-                  onChange={(e) => setTerminalInput(e.target.value)}
-                  placeholder="Ketik 'projects', 'skills', 'morph'..."
-                  className="flex-1 bg-transparent text-xs font-mono text-ink-navy focus:outline-none"
-                />
                 <button
-                  type="submit"
-                  className="p-1 rounded-lg bg-amber-clay text-ink-navy hover:bg-amber-clay/90 shadow-clay-btn transition-colors"
+                  onClick={() => setShowSystemInfoCard(false)}
+                  className="w-7 h-7 rounded-lg bg-cream border border-white text-ink-navy hover:text-red-600 flex items-center justify-center shadow-clay-btn transition-colors cursor-pointer"
+                  aria-label="Tutup info kartu"
                 >
-                  <Send size={10} />
+                  <X size={14} />
                 </button>
-              </form>
-            </div>
-          )}
+              </div>
 
-          {/* Action trigger button */}
-          <div className="pt-2 border-t border-black/5 flex items-center justify-between">
-            {activeHotspotId === 'poster' && (
-              <button
-                onClick={() => setActiveModal('about')}
-                className="w-full py-2 px-3 rounded-xl bg-amber-clay text-ink-navy text-xs font-sans font-bold border border-white shadow-clay-btn hover:bg-amber-clay/90 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-              >
-                <User size={13} />
-                <span>Buka Detail Profil & Tentang Saya</span>
-              </button>
-            )}
-            {activeHotspotId === 'monitor' && (
-              <button
-                onClick={() => setActiveModal('projects')}
-                className="w-full py-2 px-3 rounded-xl bg-amber-clay text-ink-navy text-xs font-sans font-bold border border-white shadow-clay-btn hover:bg-amber-clay/90 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-              >
-                <Monitor size={13} />
-                <span>Buka Katalog Proyek & Dokumen</span>
-              </button>
-            )}
-            {activeHotspotId === 'lemari_server' && (
-              <button
-                onClick={() => setActiveModal('experience')}
-                className="w-full py-2 px-3 rounded-xl bg-amber-clay text-ink-navy text-xs font-sans font-bold border border-white shadow-clay-btn hover:bg-amber-clay/90 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-              >
-                <FolderArchive size={13} />
-                <span>Buka Lembar Arsip & Pengalaman OPMAZ</span>
-              </button>
-            )}
-            {activeHotspotId === 'sertifikat' && (
-              <button
-                onClick={() => setActiveModal('experience')}
-                className="w-full py-2 px-3 rounded-xl bg-amber-clay text-ink-navy text-xs font-sans font-bold border border-white shadow-clay-btn hover:bg-amber-clay/90 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-              >
-                <FileText size={13} />
-                <span>Baca Lembaran Ketikan CV & Pengalaman</span>
-              </button>
-            )}
-            {activeHotspotId === 'rak_buku' && (
-              <button
-                onClick={() => setActiveModal('skills')}
-                className="w-full py-2 px-3 rounded-xl bg-amber-clay text-ink-navy text-xs font-sans font-bold border border-white shadow-clay-btn hover:bg-amber-clay/90 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-              >
-                <BookOpen size={13} />
-                <span>Buka Matriks Seluruh 24 Keahlian</span>
-              </button>
-            )}
-            {activeHotspotId === 'telepon' && (
-              <button
-                onClick={() => setActiveModal('contact')}
-                className="w-full py-2 px-3 rounded-xl bg-deep-teal text-white text-xs font-sans font-bold border border-deep-teal shadow-clay-btn hover:bg-deep-teal/90 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-              >
-                <Phone size={13} />
-                <span>Tinggalkan Memo / Hubungi Faiz</span>
-              </button>
-            )}
-            {activeHotspotId === 'overview' && (
-              <div className="flex items-center justify-between w-full text-[10px] text-ink-soft font-mono">
-                <span>Klik objek di kamar untuk zoom</span>
-                <span className="text-amber-clay-dark font-bold">11 Hotspot</span>
+              {/* Main Content: Logo & Details */}
+              <div className="flex items-start gap-4 mb-4">
+                <div className="w-16 h-16 rounded-2xl bg-bone-dark/20 border border-white/60 p-2.5 flex items-center justify-center shadow-clay-inset shrink-0">
+                  <img
+                    src={selectedSkillBook.techLogo}
+                    alt={selectedSkillBook.name}
+                    className="w-full h-full object-contain filter drop-shadow-sm"
+                    onError={(e) => {
+                      (e.target as HTMLElement).style.display = 'none';
+                    }}
+                  />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-amber-clay-dark block">
+                    KATEGORI: {selectedSkillBook.category.toUpperCase()}
+                  </span>
+                  <h3 className="text-xl font-display font-bold text-ink-navy leading-tight mt-0.5">
+                    {selectedSkillBook.name}
+                  </h3>
+                  <p className="text-xs font-sans text-deep-teal font-bold mt-0.5">
+                    {selectedSkillBook.subtitle}
+                  </p>
+                </div>
+              </div>
+
+              {/* System Specs Box */}
+              <div className="p-3.5 rounded-xl bg-bone-dark/25 border border-black/5 shadow-clay-inset space-y-2 mb-4 font-mono text-[11px]">
+                <div className="flex items-center justify-between">
+                  <span className="text-ink-soft uppercase text-[9px]">Tingkat Penguasaan:</span>
+                  <span className="font-bold text-ink-navy">{selectedSkillBook.level}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-ink-soft uppercase text-[9px]">Indeks Kemahiran:</span>
+                  <span className="font-bold text-deep-teal">{selectedSkillBook.proficiency}</span>
+                </div>
+                <div className="w-full bg-bone-dark/60 h-2 rounded-full overflow-hidden border border-black/5">
+                  <div
+                    className="h-full bg-gradient-to-r from-deep-teal to-amber-clay rounded-full"
+                    style={{ width: selectedSkillBook.proficiency }}
+                  />
+                </div>
+              </div>
+
+              {/* Description Body */}
+              <div className="text-xs text-ink-soft font-sans font-medium leading-relaxed mb-5">
+                <p>{selectedSkillBook.description}</p>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex items-center justify-between gap-2 pt-2 border-t border-black/5">
+                {selectedSkillBook.proofLink ? (
+                  <button
+                    onClick={() => {
+                      setShowSystemInfoCard(false);
+                      setPreviewDoc({
+                        url: selectedSkillBook.proofLink!,
+                        title: `Bukti Dokumen Kearsipan — ${selectedSkillBook.name}`
+                      });
+                    }}
+                    className="flex-1 py-2 px-3 rounded-xl bg-deep-teal text-white text-xs font-sans font-bold shadow-clay-btn hover:bg-deep-teal/90 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                  >
+                    <FileCheck size={13} />
+                    <span>Lihat Dokumen Terkait</span>
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => {
+                      setShowSystemInfoCard(false);
+                      setActiveModal('skills');
+                    }}
+                    className="flex-1 py-2 px-3 rounded-xl bg-cream border border-white text-ink-navy hover:text-amber-clay-dark text-xs font-sans font-bold shadow-clay-btn transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                  >
+                    <BookOpen size={13} />
+                    <span>Buka Matriks Seluruh Keahlian</span>
+                  </button>
+                )}
+                <button
+                  onClick={() => setShowSystemInfoCard(false)}
+                  className="py-2 px-4 rounded-xl bg-amber-clay text-ink-navy text-xs font-sans font-bold border border-white shadow-clay-btn hover:bg-amber-clay/90 transition-all cursor-pointer"
+                >
+                  OK, Tutup
+                </button>
+              </div>
+
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ========================================================
+          BOTTOM-RIGHT HUD: Hotspot Card / Quick Focus Card (ULTRA-COMPACT)
+          ======================================================== */}
+      <aside className="absolute bottom-5 right-4 sm:right-5 z-20 pointer-events-none max-w-[260px] w-full flex justify-end">
+        {isHudCollapsed ? (
+          <button
+            onClick={() => setIsHudCollapsed(false)}
+            className="pointer-events-auto bg-cream/95 backdrop-blur-md border border-white rounded-xl px-2.5 py-1.5 shadow-clay-subtle flex items-center gap-1.5 text-[10px] font-mono text-ink-navy font-bold hover:bg-cream transition-all cursor-pointer"
+            title="Buka Info Fokus"
+          >
+            <Info size={12} className="text-amber-clay-dark" />
+            <span className="truncate max-w-[120px]">
+              {selectedSkillBook ? selectedSkillBook.name : activeHotspotId}
+            </span>
+            <span className="text-[9px] text-amber-clay-dark ml-0.5">▲</span>
+          </button>
+        ) : (
+          <div className="pointer-events-auto bg-cream/90 backdrop-blur-md border border-white/80 rounded-[18px] shadow-clay-subtle p-2.5 space-y-1.5 w-full">
+            
+            <div className="flex items-center justify-between">
+              <span className="text-[8px] font-mono font-extrabold uppercase tracking-widest text-amber-clay-dark truncate">
+                {selectedSkillBook ? `BUKU: ${selectedSkillBook.category}` : '// FOKUS RUANGAN'}
+              </span>
+              <div className="flex items-center gap-1 shrink-0">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="text-[8px] font-mono text-ink-soft font-bold uppercase">
+                  {activeHotspotId}
+                </span>
+                <button
+                  onClick={() => setIsHudCollapsed(true)}
+                  className="w-4 h-4 ml-0.5 rounded text-ink-soft hover:text-ink-navy flex items-center justify-center cursor-pointer"
+                  title="Perkecil info"
+                >
+                  <Minimize2 size={10} />
+                </button>
+              </div>
+            </div>
+
+            {/* Skill Book Card Header with Logo */}
+            {selectedSkillBook ? (
+              <div className="flex items-center gap-2 bg-bone-dark/20 p-1.5 rounded-xl border border-black/5 shadow-clay-inset">
+                <div className="w-8 h-8 rounded-lg bg-cream border border-white p-1 flex items-center justify-center shadow-clay-subtle shrink-0">
+                  <img
+                    src={selectedSkillBook.techLogo}
+                    alt={selectedSkillBook.name}
+                    className="w-full h-full object-contain"
+                    onError={(e) => {
+                      (e.target as HTMLElement).style.display = 'none';
+                    }}
+                  />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h3 className="text-xs font-display font-bold text-ink-navy truncate leading-tight">
+                    {selectedSkillBook.name}
+                  </h3>
+                  <p className="text-[9px] font-sans text-deep-teal font-semibold truncate">
+                    {selectedSkillBook.subtitle}
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div>
+                <h3 className="text-xs font-display font-bold text-ink-navy leading-tight truncate">
+                  {activeCopy.title}
+                </h3>
+                <p className="text-[9px] font-sans text-deep-teal font-semibold mt-0.5 truncate">
+                  {activeCopy.subtitle}
+                </p>
               </div>
             )}
-            {activeHotspotId === 'buku_laptop' && (
-              <button
-                onClick={() => handleTriggerMorph()}
-                className="w-full py-2 px-3 rounded-xl bg-deep-teal text-white text-xs font-sans font-bold border border-deep-teal shadow-clay-btn hover:bg-deep-teal/90 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-              >
-                <RefreshCw size={13} className={isMorphing ? 'animate-spin' : ''} />
-                <span>{isDigital ? 'Kembalikan ke Buku Kasir' : 'Transformasikan ke Laptop'}</span>
-              </button>
+
+            <div className="text-[10px] text-ink-soft font-sans font-medium leading-relaxed max-h-12 overflow-y-auto pr-0.5">
+              {selectedSkillBook ? (
+                <p>{selectedSkillBook.description}</p>
+              ) : (
+                <p>{activeCopy.paragraphs[0]}</p>
+              )}
+            </div>
+
+            {/* Direct Shelf Level Selector when focusing bookshelf */}
+            {activeHotspotId === 'rak_buku' && (
+              <div className="grid grid-cols-2 gap-1 pt-1 border-t border-black/5">
+                <button
+                  onClick={() => handleSelectSkillBook(SKILL_BOOKS[0])}
+                  className={`py-1 px-1.5 rounded-md text-[8px] font-mono font-bold transition-all cursor-pointer text-left truncate ${
+                    selectedSkillBook?.category === 'Bahasa Pemrograman Utama'
+                      ? 'bg-amber-clay text-ink-navy border border-white shadow-clay-subtle'
+                      : 'bg-bone-dark/30 text-ink-soft hover:bg-bone-dark/50'
+                  }`}
+                  title="Fokus ke Rak 1 (Atas) - Bahasa Pemrograman"
+                >
+                  ▲ Rak 1: Bahasa
+                </button>
+                <button
+                  onClick={() => handleSelectSkillBook(SKILL_BOOKS[8])}
+                  className={`py-1 px-1.5 rounded-md text-[8px] font-mono font-bold transition-all cursor-pointer text-left truncate ${
+                    selectedSkillBook?.category === 'Frontend Framework & Tools'
+                      ? 'bg-amber-clay text-ink-navy border border-white shadow-clay-subtle'
+                      : 'bg-bone-dark/30 text-ink-soft hover:bg-bone-dark/50'
+                  }`}
+                  title="Fokus ke Rak 2 - Frontend"
+                >
+                  ■ Rak 2: Frontend
+                </button>
+                <button
+                  onClick={() => handleSelectSkillBook(SKILL_BOOKS[14])}
+                  className={`py-1 px-1.5 rounded-md text-[8px] font-mono font-bold transition-all cursor-pointer text-left truncate ${
+                    selectedSkillBook?.category === 'Backend & Basis Data'
+                      ? 'bg-amber-clay text-ink-navy border border-white shadow-clay-subtle'
+                      : 'bg-bone-dark/30 text-ink-soft hover:bg-bone-dark/50'
+                  }`}
+                  title="Fokus ke Rak 3 - Backend"
+                >
+                  ■ Rak 3: Backend
+                </button>
+                <button
+                  onClick={() => handleSelectSkillBook(SKILL_BOOKS[20])}
+                  className={`py-1 px-1.5 rounded-md text-[8px] font-mono font-bold transition-all cursor-pointer text-left truncate ${
+                    selectedSkillBook?.category === 'Administrasi & Data'
+                      ? 'bg-amber-clay text-ink-navy border border-white shadow-clay-subtle'
+                      : 'bg-bone-dark/30 text-ink-soft hover:bg-bone-dark/50'
+                  }`}
+                  title="Fokus ke Rak 4 (Bawah) - Administrasi & Data"
+                >
+                  ▼ Rak 4: Admin
+                </button>
+              </div>
             )}
+
+            {/* Action trigger button */}
+            <div className="pt-1 border-t border-black/5 flex items-center justify-between">
+              {activeHotspotId === 'poster' && (
+                <button
+                  onClick={() => setActiveModal('about')}
+                  className="w-full py-1.5 px-2 rounded-lg bg-amber-clay text-ink-navy text-[10px] font-sans font-bold border border-white shadow-clay-btn hover:bg-amber-clay/90 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                >
+                  <User size={11} />
+                  <span>Buka Detail Profil & Cerita</span>
+                </button>
+              )}
+              {activeHotspotId === 'monitor' && (
+                <button
+                  onClick={() => setActiveModal('projects')}
+                  className="w-full py-1.5 px-2 rounded-lg bg-amber-clay text-ink-navy text-[10px] font-sans font-bold border border-white shadow-clay-btn hover:bg-amber-clay/90 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                >
+                  <Monitor size={11} />
+                  <span>Buka Katalog Proyek</span>
+                </button>
+              )}
+              {activeHotspotId === 'lemari_server' && (
+                <button
+                  onClick={() => setActiveModal('experience')}
+                  className="w-full py-1.5 px-2 rounded-lg bg-amber-clay text-ink-navy text-[10px] font-sans font-bold border border-white shadow-clay-btn hover:bg-amber-clay/90 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                >
+                  <FolderArchive size={11} />
+                  <span>Buka Arsip OPMAZ</span>
+                </button>
+              )}
+              {activeHotspotId === 'sertifikat' && (
+                <button
+                  onClick={() => setActiveModal('experience')}
+                  className="w-full py-1.5 px-2 rounded-lg bg-amber-clay text-ink-navy text-[10px] font-sans font-bold border border-white shadow-clay-btn hover:bg-amber-clay/90 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                >
+                  <FileText size={11} />
+                  <span>Baca Lembaran CV</span>
+                </button>
+              )}
+              {activeHotspotId === 'rak_buku' && (
+                <button
+                  onClick={() => {
+                    if (selectedSkillBook) {
+                      setShowSystemInfoCard(true);
+                    } else {
+                      setActiveModal('skills');
+                    }
+                  }}
+                  className="w-full py-1.5 px-2 rounded-lg bg-amber-clay text-ink-navy text-[10px] font-sans font-bold border border-white shadow-clay-btn hover:bg-amber-clay/90 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                >
+                  <Cpu size={11} />
+                  <span>{selectedSkillBook ? 'System Info Card' : 'Lihat 24 Keahlian'}</span>
+                </button>
+              )}
+              {activeHotspotId === 'telepon' && (
+                <button
+                  onClick={() => setActiveModal('contact')}
+                  className="w-full py-1.5 px-2 rounded-lg bg-deep-teal text-white text-[10px] font-sans font-bold border border-deep-teal shadow-clay-btn hover:bg-deep-teal/90 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                >
+                  <Phone size={11} />
+                  <span>Hubungi Faiz</span>
+                </button>
+              )}
+              {activeHotspotId === 'jendela' && (
+                <div className="flex flex-col gap-1.5 w-full">
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      onClick={() => handleToggleLights()}
+                      className="flex-1 py-1 px-2 rounded-lg bg-cream border border-white text-ink-navy text-[9px] font-sans font-bold shadow-clay-btn hover:bg-white transition-all flex items-center justify-center gap-1 cursor-pointer"
+                    >
+                      {isNightMode ? <Sun size={10} className="text-amber-500" /> : <Moon size={10} className="text-indigo-400" />}
+                      <span>{isNightMode ? 'Siang' : 'Malam'}</span>
+                    </button>
+                    <button
+                      onClick={() => handleSelectHotspot('overview')}
+                      className="py-1 px-2 rounded-lg bg-amber-clay text-ink-navy text-[9px] font-sans font-bold border border-white shadow-clay-btn hover:bg-amber-clay/90 transition-all flex items-center justify-center gap-1 cursor-pointer"
+                      title="Zoom Out ke Kamar"
+                    >
+                      <Minimize2 size={10} />
+                      <span>Zoom Out</span>
+                    </button>
+                  </div>
+                  <span className="text-[8px] text-ink-soft font-mono text-center">
+                    Klik gorden di 3D untuk buka / tutup
+                  </span>
+                </div>
+              )}
+              {activeHotspotId === 'overview' && (
+                <div className="flex items-center justify-between w-full">
+                  <button
+                    onClick={() => handleSelectHotspot('jendela')}
+                    className="py-1 px-2 rounded-lg bg-cream border border-white text-ink-navy text-[9px] font-sans font-bold shadow-clay-btn hover:bg-white transition-all flex items-center gap-1 cursor-pointer"
+                    title="Zoom in pemandangan luar jendela"
+                  >
+                    <Maximize2 size={10} className="text-deep-teal" />
+                    <span>Zoom Jendela</span>
+                  </button>
+                  <span className="text-[8px] text-amber-clay-dark font-bold font-mono">11 Hotspot</span>
+                </div>
+              )}
+              {activeHotspotId === 'buku_laptop' && (
+                <button
+                  onClick={() => handleTriggerMorph()}
+                  className="w-full py-1.5 px-2 rounded-lg bg-deep-teal text-white text-[10px] font-sans font-bold border border-deep-teal shadow-clay-btn hover:bg-deep-teal/90 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                >
+                  <RefreshCw size={11} className={isMorphing ? 'animate-spin' : ''} />
+                  <span>{isDigital ? 'Kembalikan Buku' : 'Digitalkan Laptop'}</span>
+                </button>
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </aside>
 
       {/* ========================================================
@@ -756,7 +945,7 @@ export function RoomExperience() {
                             href="https://github.com/zeynnn1925-sys/life-flow"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="px-3 py-1 rounded-lg bg-cream border border-white text-xs font-mono font-bold text-ink-navy hover:text-amber-clay-dark shadow-clay-btn flex items-center gap-1"
+                            className="px-3 py-1 rounded-lg bg-cream border border-white text-xs font-mono font-bold text-ink-navy hover:text-amber-clay-dark shadow-clay-btn flex items-center gap-1 cursor-pointer"
                           >
                             <ExternalLink size={11} /> Source
                           </a>
@@ -764,7 +953,7 @@ export function RoomExperience() {
                             href="https://life-flow-ashy.vercel.app/"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="px-3 py-1 rounded-lg bg-amber-clay border border-white text-xs font-mono font-bold text-ink-navy shadow-clay-btn flex items-center gap-1"
+                            className="px-3 py-1 rounded-lg bg-amber-clay border border-white text-xs font-mono font-bold text-ink-navy shadow-clay-btn flex items-center gap-1 cursor-pointer"
                           >
                             <ExternalLink size={11} /> Live Demo
                           </a>
@@ -790,7 +979,7 @@ export function RoomExperience() {
                         </div>
                         <button
                           onClick={() => setPreviewDoc({ url: '/laporan-pekanan-osis.docx', title: 'Draf Dokumen Kearsipan OPMAZ (.docx)' })}
-                          className="px-3 py-1 rounded-lg bg-deep-teal text-white text-xs font-sans font-bold shadow-clay-btn flex items-center gap-1.5 hover:bg-deep-teal/90"
+                          className="px-3 py-1 rounded-lg bg-deep-teal text-white text-xs font-sans font-bold shadow-clay-btn flex items-center gap-1.5 hover:bg-deep-teal/90 cursor-pointer"
                         >
                           <FileText size={12} />
                           <span>Pratinjau Dokumen (.docx)</span>
@@ -810,7 +999,7 @@ export function RoomExperience() {
                         </div>
                         <button
                           onClick={() => setPreviewDoc({ url: '/presensi-kehadiran.xlsx', title: 'Tabel Rekapitulasi Presensi Kehadiran (.xlsx)' })}
-                          className="px-3 py-1 rounded-lg bg-deep-teal text-white text-xs font-sans font-bold shadow-clay-btn flex items-center gap-1.5 hover:bg-deep-teal/90"
+                          className="px-3 py-1 rounded-lg bg-deep-teal text-white text-xs font-sans font-bold shadow-clay-btn flex items-center gap-1.5 hover:bg-deep-teal/90 cursor-pointer"
                         >
                           <FileText size={12} />
                           <span>Pratinjau Lembar Kerja (.xlsx)</span>
@@ -830,7 +1019,7 @@ export function RoomExperience() {
                         </div>
                         <button
                           onClick={() => setPreviewDoc({ url: '/proposal-gema-alquran.docx', title: 'Proposal & Persuratan Resmi (.docx)' })}
-                          className="px-3 py-1 rounded-lg bg-deep-teal text-white text-xs font-sans font-bold shadow-clay-btn flex items-center gap-1.5 hover:bg-deep-teal/90"
+                          className="px-3 py-1 rounded-lg bg-deep-teal text-white text-xs font-sans font-bold shadow-clay-btn flex items-center gap-1.5 hover:bg-deep-teal/90 cursor-pointer"
                         >
                           <FileText size={12} />
                           <span>Pratinjau Proposal (.docx)</span>
@@ -998,6 +1187,7 @@ export function RoomExperience() {
                               onClick={() => {
                                 setSelectedSkillBook(book);
                                 setActiveHotspotId('rak_buku');
+                                setShowSystemInfoCard(true);
                                 setActiveModal('none');
                               }}
                               className="p-3.5 rounded-2xl bg-bone-dark/20 border border-black/5 shadow-clay-inset hover:bg-bone-dark/35 transition-all cursor-pointer flex items-start gap-3 group"
@@ -1054,7 +1244,7 @@ export function RoomExperience() {
                     <div className="md:col-span-5 space-y-2.5">
                       <a
                         href="mailto:muhammadfaizdzahin11@gmail.com"
-                        className="p-3 rounded-xl bg-bone-dark/20 border border-black/5 shadow-clay-inset flex items-center gap-3 hover:bg-bone-dark/35 transition-all block"
+                        className="p-3 rounded-xl bg-bone-dark/20 border border-black/5 shadow-clay-inset flex items-center gap-3 hover:bg-bone-dark/35 transition-all block cursor-pointer"
                       >
                         <Mail size={16} className="text-deep-teal shrink-0" />
                         <div className="truncate">
@@ -1067,7 +1257,7 @@ export function RoomExperience() {
                         href="https://wa.me/6287792811601"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="p-3 rounded-xl bg-bone-dark/20 border border-black/5 shadow-clay-inset flex items-center gap-3 hover:bg-bone-dark/35 transition-all block"
+                        className="p-3 rounded-xl bg-bone-dark/20 border border-black/5 shadow-clay-inset flex items-center gap-3 hover:bg-bone-dark/35 transition-all block cursor-pointer"
                       >
                         <Phone size={16} className="text-emerald-600 shrink-0" />
                         <div>
@@ -1080,7 +1270,7 @@ export function RoomExperience() {
                         href="https://github.com/zeynnn1925-sys"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="p-3 rounded-xl bg-bone-dark/20 border border-black/5 shadow-clay-inset flex items-center gap-3 hover:bg-bone-dark/35 transition-all block"
+                        className="p-3 rounded-xl bg-bone-dark/20 border border-black/5 shadow-clay-inset flex items-center gap-3 hover:bg-bone-dark/35 transition-all block cursor-pointer"
                       >
                         <ExternalLink size={16} className="text-ink-navy shrink-0" />
                         <div>

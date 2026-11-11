@@ -515,34 +515,417 @@ export function createScreenCodeTexture(activeCodeIndex: number): THREE.CanvasTe
 }
 
 export function createBookSpineTexture(title: string, color: string): THREE.CanvasTexture {
-  const cacheKey = `book_${title}_${color}`;
+  const cacheKey = `book_v2_${title}_${color}`;
   if (textureCache.has(cacheKey)) {
     return textureCache.get(cacheKey)!;
   }
 
   const canvas = document.createElement('canvas');
-  canvas.width = 128;
-  canvas.height = 512;
+  canvas.width = 256;
+  canvas.height = 1024;
   const ctx = canvas.getContext('2d')!;
 
+  // 1. Rich base leather/cloth book cover color
   ctx.fillStyle = color;
-  ctx.fillRect(0, 0, 128, 512);
+  ctx.fillRect(0, 0, 256, 1024);
 
-  ctx.fillStyle = 'rgba(255, 215, 120, 0.45)';
-  ctx.fillRect(0, 20, 128, 6);
-  ctx.fillRect(0, 32, 128, 2);
-  ctx.fillRect(0, 480, 128, 6);
-  ctx.fillRect(0, 472, 128, 2);
+  // 2. Spine curvature shadow gradient (makes spine look 3D cylindrical)
+  const spineGrad = ctx.createLinearGradient(0, 0, 256, 0);
+  spineGrad.addColorStop(0, 'rgba(0, 0, 0, 0.45)');
+  spineGrad.addColorStop(0.18, 'rgba(0, 0, 0, 0.08)');
+  spineGrad.addColorStop(0.5, 'rgba(255, 255, 255, 0.22)'); // central highlight
+  spineGrad.addColorStop(0.82, 'rgba(0, 0, 0, 0.08)');
+  spineGrad.addColorStop(1, 'rgba(0, 0, 0, 0.5)');
+  ctx.fillStyle = spineGrad;
+  ctx.fillRect(0, 0, 256, 1024);
 
-  ctx.save();
-  ctx.translate(64, 256);
-  ctx.rotate(-Math.PI / 2);
-  ctx.fillStyle = '#FFFFFF';
-  ctx.font = 'bold 22px "JetBrains Mono", sans-serif';
+  // 3. Golden embossed ornamental ribs
+  const drawGoldBand = (y: number, h: number) => {
+    ctx.fillStyle = '#C7862F';
+    ctx.fillRect(12, y, 232, h);
+    ctx.fillStyle = '#FFE6A3';
+    ctx.fillRect(12, y, 232, Math.max(1, Math.floor(h * 0.35)));
+  };
+
+  drawGoldBand(36, 10);
+  drawGoldBand(54, 3);
+  drawGoldBand(130, 4);
+
+  drawGoldBand(890, 4);
+  drawGoldBand(960, 3);
+  drawGoldBand(974, 10);
+
+  // 4. Tech icon badge on top of spine
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
+  ctx.beginPath();
+  ctx.arc(128, 92, 28, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = '#FFE6A3';
+  ctx.lineWidth = 3;
+  ctx.stroke();
+
+  ctx.fillStyle = '#FFE6A3';
+  ctx.font = 'bold 22px monospace';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillText(title.toUpperCase(), 0, 0);
+  ctx.fillText('◈', 128, 92);
+
+  // 5. High-contrast bold title badge along the spine (LARGE FONT)
+  ctx.save();
+  ctx.translate(128, 515);
+  ctx.rotate(-Math.PI / 2);
+
+  // Contrast plaque background
+  ctx.fillStyle = 'rgba(12, 16, 26, 0.55)';
+  ctx.beginPath();
+  if (ctx.roundRect) {
+    ctx.roundRect(-290, -56, 580, 112, 16);
+  } else {
+    ctx.rect(-290, -56, 580, 112);
+  }
+  ctx.fill();
+
+  ctx.strokeStyle = '#E8A855';
+  ctx.lineWidth = 3;
+  ctx.stroke();
+
+  // Primary title: LARGE, BOLD, AND PROMINENT
+  const displayTitle = title.length > 14 ? title : title.toUpperCase();
+  const fontSize = displayTitle.length > 12 ? 46 : 56;
+  ctx.font = `900 ${fontSize}px "Space Grotesk", "JetBrains Mono", sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+
+  // Text shadow for crisp legibility
+  ctx.fillStyle = '#000000';
+  ctx.fillText(displayTitle, 2, 3);
+
+  // White crisp text fill
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fillText(displayTitle, 0, 0);
+
   ctx.restore();
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  textureCache.set(cacheKey, texture);
+  return texture;
+}
+
+/**
+ * Creates a richly detailed view of a serene Indonesian residential neighborhood ("Perumahan yang Asri")
+ * Features: Terracotta-roof houses, lush trees, paved residential street, manicured gardens, and sunny sky or cozy night.
+ */
+export function createNeighborhoodViewTexture(isNight: boolean): THREE.CanvasTexture {
+  const cacheKey = `neighborhood_asri_${isNight ? 'night' : 'day'}`;
+  if (textureCache.has(cacheKey)) {
+    return textureCache.get(cacheKey)!;
+  }
+
+  const canvas = document.createElement('canvas');
+  canvas.width = 1024;
+  canvas.height = 1280;
+  const ctx = canvas.getContext('2d')!;
+
+  // 1. Sky Gradient
+  const skyGrad = ctx.createLinearGradient(0, 0, 0, 680);
+  if (!isNight) {
+    skyGrad.addColorStop(0, '#4A88D0'); // Vivid blue sky
+    skyGrad.addColorStop(0.45, '#7CB4EA');
+    skyGrad.addColorStop(0.8, '#C4E2FA');
+    skyGrad.addColorStop(1, '#FFF2D9'); // Warm golden horizon
+  } else {
+    skyGrad.addColorStop(0, '#060A14'); // Night dark indigo
+    skyGrad.addColorStop(0.5, '#101728');
+    skyGrad.addColorStop(1, '#1A253D');
+  }
+  ctx.fillStyle = skyGrad;
+  ctx.fillRect(0, 0, 1024, 1280);
+
+  if (!isNight) {
+    // Warm morning / afternoon sun glow
+    const sunGrad = ctx.createRadialGradient(280, 220, 20, 280, 220, 220);
+    sunGrad.addColorStop(0, 'rgba(255, 250, 220, 0.95)');
+    sunGrad.addColorStop(0.3, 'rgba(255, 225, 140, 0.5)');
+    sunGrad.addColorStop(1, 'rgba(255, 220, 120, 0)');
+    ctx.fillStyle = sunGrad;
+    ctx.beginPath();
+    ctx.arc(280, 220, 220, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Soft fluffy white clouds
+    const drawCloud = (cx: number, cy: number, scale: number) => {
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.88)';
+      ctx.beginPath();
+      ctx.arc(cx, cy, 38 * scale, 0, Math.PI * 2);
+      ctx.arc(cx + 40 * scale, cy - 12 * scale, 48 * scale, 0, Math.PI * 2);
+      ctx.arc(cx + 90 * scale, cy - 8 * scale, 42 * scale, 0, Math.PI * 2);
+      ctx.arc(cx + 130 * scale, cy + 4 * scale, 34 * scale, 0, Math.PI * 2);
+      ctx.fill();
+    };
+    drawCloud(120, 180, 1.1);
+    drawCloud(620, 260, 0.9);
+    drawCloud(780, 160, 1.2);
+  } else {
+    // Night: Glowing crescent moon & stars
+    ctx.fillStyle = '#FFF8D6';
+    ctx.beginPath();
+    ctx.arc(760, 200, 48, 0, Math.PI * 2);
+    ctx.fill();
+    // Shadow for crescent
+    ctx.fillStyle = '#060A14';
+    ctx.beginPath();
+    ctx.arc(778, 192, 44, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Twinkling stars
+    ctx.fillStyle = '#FFFFFF';
+    for (let i = 0; i < 40; i++) {
+      const sx = (i * 73) % 1000 + 12;
+      const sy = (i * 47) % 380 + 20;
+      const sr = (i % 3 === 0) ? 2 : 1.2;
+      ctx.beginPath();
+      ctx.arc(sx, sy, sr, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  // 2. Distant rolling green hills / mountains
+  ctx.fillStyle = !isNight ? '#558269' : '#142426';
+  ctx.beginPath();
+  ctx.moveTo(0, 520);
+  ctx.bezierCurveTo(240, 470, 450, 440, 680, 475);
+  ctx.bezierCurveTo(840, 500, 960, 490, 1024, 510);
+  ctx.lineTo(1024, 700);
+  ctx.lineTo(0, 700);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.fillStyle = !isNight ? '#3E6A51' : '#0F1D1E';
+  ctx.beginPath();
+  ctx.moveTo(0, 560);
+  ctx.bezierCurveTo(320, 520, 550, 540, 780, 510);
+  ctx.bezierCurveTo(900, 490, 980, 530, 1024, 545);
+  ctx.lineTo(1024, 720);
+  ctx.lineTo(0, 720);
+  ctx.closePath();
+  ctx.fill();
+
+  // 3. Middleground: Charming Residential Houses ("Perumahan Asri")
+  // Houses row with terracotta hip roofs, cream walls, windows, and porches
+  const houses = [
+    { x: 40, y: 550, w: 220, h: 140, roofColor: !isNight ? '#B85233' : '#3D1D13', wallColor: !isNight ? '#FDFBF7' : '#222838' },
+    { x: 310, y: 535, w: 240, h: 155, roofColor: !isNight ? '#A0452A' : '#35180E', wallColor: !isNight ? '#F7F3E8' : '#252B3B' },
+    { x: 600, y: 545, w: 210, h: 145, roofColor: !isNight ? '#C25A38' : '#421E14', wallColor: !isNight ? '#FAF6EE' : '#232939' },
+    { x: 840, y: 540, w: 200, h: 150, roofColor: !isNight ? '#A84B2E' : '#381A10', wallColor: !isNight ? '#F8F4EA' : '#242A3A' },
+  ];
+
+  houses.forEach((h) => {
+    // House wall
+    ctx.fillStyle = h.wallColor;
+    ctx.fillRect(h.x + 15, h.y + 60, h.w - 30, h.h - 60);
+
+    // Terracotta roof (triangular / trapezoid pitched roof)
+    ctx.fillStyle = h.roofColor;
+    ctx.beginPath();
+    ctx.moveTo(h.x, h.y + 60);
+    ctx.lineTo(h.x + h.w / 2, h.y);
+    ctx.lineTo(h.x + h.w, h.y + 60);
+    ctx.closePath();
+    ctx.fill();
+
+    // Roof tile ridge detail
+    ctx.strokeStyle = !isNight ? 'rgba(0,0,0,0.18)' : 'rgba(0,0,0,0.4)';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    // Second roof ridge highlight
+    ctx.fillStyle = !isNight ? '#D46944' : '#4E2419';
+    ctx.beginPath();
+    ctx.moveTo(h.x + 30, h.y + 60);
+    ctx.lineTo(h.x + h.w / 2, h.y + 12);
+    ctx.lineTo(h.x + h.w - 30, h.y + 60);
+    ctx.closePath();
+    ctx.fill();
+
+    // Windows with wood trim
+    const winY = h.y + 80;
+    const winW = 34;
+    const winH = 40;
+
+    [h.x + 35, h.x + h.w - 70].forEach((wx) => {
+      ctx.fillStyle = !isNight ? '#5E412A' : '#1D1A18';
+      ctx.fillRect(wx - 3, winY - 3, winW + 6, winH + 6);
+
+      // Glass: bright sky reflection in day / warm yellow glowing light in night!
+      ctx.fillStyle = !isNight ? '#98CEE8' : '#FFD966';
+      ctx.fillRect(wx, winY, winW, winH);
+
+      // Window cross
+      ctx.fillStyle = !isNight ? '#5E412A' : '#33261A';
+      ctx.fillRect(wx + winW / 2 - 1.5, winY, 3, winH);
+      ctx.fillRect(wx, winY + winH / 2 - 1.5, winW, 3);
+    });
+
+    // Front door with awning / canopy
+    const doorX = h.x + h.w / 2 - 18;
+    const doorY = h.y + 90;
+    ctx.fillStyle = !isNight ? '#C7862F' : '#4A341E';
+    ctx.fillRect(doorX - 6, doorY - 8, 48, 8); // canopy
+    ctx.fillStyle = !isNight ? '#6E4524' : '#2A1A0F';
+    ctx.fillRect(doorX, doorY, 36, 50); // door
+
+    // Porch light at night
+    if (isNight) {
+      ctx.fillStyle = '#FFE58F';
+      ctx.beginPath();
+      ctx.arc(doorX + 18, doorY - 4, 6, 0, Math.PI * 2);
+      ctx.fill();
+
+      const porchGrad = ctx.createRadialGradient(doorX + 18, doorY + 10, 5, doorX + 18, doorY + 10, 45);
+      porchGrad.addColorStop(0, 'rgba(255, 230, 140, 0.45)');
+      porchGrad.addColorStop(1, 'rgba(255, 230, 140, 0)');
+      ctx.fillStyle = porchGrad;
+      ctx.beginPath();
+      ctx.arc(doorX + 18, doorY + 10, 45, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  });
+
+  // 4. Clean Residential Street & Sidewalk (Jalan Perumahan)
+  const streetY = 720;
+  // Green front lawns
+  ctx.fillStyle = !isNight ? '#629E52' : '#1A3317';
+  ctx.fillRect(0, 680, 1024, 60);
+
+  // Sidewalk with paving
+  ctx.fillStyle = !isNight ? '#DDD4C4' : '#32302D';
+  ctx.fillRect(0, 735, 1024, 35);
+  ctx.fillStyle = !isNight ? '#C8BDA9' : '#282624';
+  for (let px = 0; px < 1024; px += 48) {
+    ctx.fillRect(px, 735, 2, 35);
+  }
+
+  // Asphalt residential street
+  ctx.fillStyle = !isNight ? '#4C515B' : '#181A20';
+  ctx.fillRect(0, 770, 1024, 180);
+
+  // White dotted road center line
+  ctx.fillStyle = !isNight ? '#E6E9EE' : '#555C6B';
+  for (let rx = 20; rx < 1024; rx += 70) {
+    ctx.fillRect(rx, 855, 42, 6);
+  }
+
+  // Lower sidewalk and green garden verge
+  ctx.fillStyle = !isNight ? '#DDD4C4' : '#32302D';
+  ctx.fillRect(0, 950, 1024, 30);
+  ctx.fillStyle = !isNight ? '#4D823E' : '#152912';
+  ctx.fillRect(0, 980, 1024, 300);
+
+  // 5. Lush Greenery: Tropical trees, coconut palms, leafy banyans & flower bushes
+  // Function to draw leafy tree
+  const drawLushTree = (tx: number, ty: number, tr: number, shadeColor: string, hiColor: string) => {
+    // Tree trunk
+    ctx.fillStyle = !isNight ? '#5C402E' : '#1E1510';
+    ctx.fillRect(tx - 10, ty, 20, 120);
+
+    // Foliage clusters
+    ctx.fillStyle = shadeColor;
+    ctx.beginPath();
+    ctx.arc(tx, ty - 10, tr, 0, Math.PI * 2);
+    ctx.arc(tx - tr * 0.5, ty + tr * 0.1, tr * 0.75, 0, Math.PI * 2);
+    ctx.arc(tx + tr * 0.5, ty + tr * 0.1, tr * 0.75, 0, Math.PI * 2);
+    ctx.arc(tx, ty - tr * 0.5, tr * 0.65, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Sunlight highlights on top of foliage
+    if (!isNight) {
+      ctx.fillStyle = hiColor;
+      ctx.beginPath();
+      ctx.arc(tx - tr * 0.2, ty - tr * 0.4, tr * 0.55, 0, Math.PI * 2);
+      ctx.arc(tx + tr * 0.2, ty - tr * 0.35, tr * 0.5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  };
+
+  // Background trees between houses
+  drawLushTree(280, 560, 65, !isNight ? '#3A6B35' : '#112210', '#63A653');
+  drawLushTree(560, 550, 72, !isNight ? '#2E5D2A' : '#0D1D0C', '#549646');
+  drawLushTree(820, 560, 68, !isNight ? '#3A6B35' : '#112210', '#63A653');
+
+  // Foreground prominent lush trees & coconut palms
+  drawLushTree(90, 660, 85, !isNight ? '#2A6328' : '#0B1F0A', '#5BB554');
+  drawLushTree(930, 650, 95, !isNight ? '#245922' : '#091B08', '#4FA847');
+
+  // Coconut palm tree leaning gracefully
+  const drawPalm = (px: number, py: number) => {
+    ctx.strokeStyle = !isNight ? '#7A5C43' : '#271D16';
+    ctx.lineWidth = 14;
+    ctx.beginPath();
+    ctx.moveTo(px, py + 220);
+    ctx.quadraticCurveTo(px + 40, py + 100, px + 20, py);
+    ctx.stroke();
+
+    // Palm fronds
+    ctx.strokeStyle = !isNight ? '#3C7E34' : '#122D0F';
+    ctx.lineWidth = 6;
+    for (let a = -0.8; a <= 0.8; a += 0.25) {
+      ctx.beginPath();
+      ctx.moveTo(px + 20, py);
+      ctx.quadraticCurveTo(px + 20 + a * 120, py - 60, px + 20 + a * 180, py + 20 + Math.abs(a) * 50);
+      ctx.stroke();
+    }
+  };
+  drawPalm(430, 480);
+
+  // Blooming colorful bougainvillea & garden bushes (Pink, Red, Yellow)
+  const drawFlowerBush = (bx: number, by: number, bw: number, bh: number, leafColor: string, flowerColor: string) => {
+    ctx.fillStyle = leafColor;
+    ctx.beginPath();
+    ctx.ellipse(bx, by, bw, bh, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Flowers dots
+    ctx.fillStyle = flowerColor;
+    for (let f = 0; f < 16; f++) {
+      const fx = bx - bw * 0.7 + Math.random() * bw * 1.4;
+      const fy = by - bh * 0.7 + Math.random() * bh * 1.4;
+      ctx.beginPath();
+      ctx.arc(fx, fy, 4, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  };
+
+  drawFlowerBush(200, 710, 48, 26, !isNight ? '#4C8E3C' : '#172E13', '#FF4081'); // Pink Bougainvillea
+  drawFlowerBush(350, 715, 42, 22, !isNight ? '#5A9E48' : '#1B3516', '#FFD54F'); // Yellow Allamanda
+  drawFlowerBush(680, 710, 52, 28, !isNight ? '#4C8E3C' : '#172E13', '#FF5252'); // Red Hibiscus
+  drawFlowerBush(800, 718, 44, 24, !isNight ? '#5A9E48' : '#1B3516', '#E040FB'); // Purple Orchid bush
+
+  // Streetlamp on sidewalk
+  const drawStreetLamp = (lx: number, ly: number) => {
+    ctx.fillStyle = !isNight ? '#2C3240' : '#10131A';
+    ctx.fillRect(lx - 3, ly, 6, 95);
+    ctx.fillRect(lx - 12, ly - 6, 24, 6);
+
+    // Lamp bulb
+    ctx.fillStyle = !isNight ? '#FFFFFF' : '#FFEBA0';
+    ctx.beginPath();
+    ctx.arc(lx, ly + 2, 8, 0, Math.PI * 2);
+    ctx.fill();
+
+    if (isNight) {
+      // Radiant streetlamp glow
+      const lampGlow = ctx.createRadialGradient(lx, ly + 5, 4, lx, ly + 5, 80);
+      lampGlow.addColorStop(0, 'rgba(255, 235, 140, 0.6)');
+      lampGlow.addColorStop(1, 'rgba(255, 235, 140, 0)');
+      ctx.fillStyle = lampGlow;
+      ctx.beginPath();
+      ctx.arc(lx, ly + 5, 80, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  };
+  drawStreetLamp(260, 680);
+  drawStreetLamp(750, 680);
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;

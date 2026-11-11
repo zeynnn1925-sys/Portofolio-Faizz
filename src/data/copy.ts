@@ -168,4 +168,17 @@ export const ROOM_COPY: Record<string, CopyContent> = {
       { label: "Interaksi", value: "Klik untuk menyapa" },
     ],
   },
+  jendela: {
+    title: "Pemandangan Perumahan Asri",
+    subtitle: "Suasana Tenang Kompleks Perumahan di Luar Jendela",
+    paragraphs: [
+      "Dari jendela kamar, terbentang pemandangan kompleks perumahan yang asri dengan atap genteng terakota hangat, pohon kelapa yang menjulang, deretan pohon banyan rindang, semak bugenvil mekar, dan jalan lingkungan yang bersih.",
+      "Di siang hari, awan berarak lembut di bawah langit biru cerah. Di malam hari, bintang berkelip dan jendela rumah serta lampu taman memancarkan cahaya hangat yang menenangkan.",
+    ],
+    meta: [
+      { label: "Suasana", value: "Perumahan Asri & Hijau" },
+      { label: "Animasi", value: "Awan Berarak & Bintang Kerlip" },
+      { label: "Gorden", value: "Bisa Dibuka / Ditutup" },
+    ],
+  },
 };

@@ -39,14 +39,43 @@ export function RoomCanvas({
   const [pointerPos, setPointerPos] = useState({ x: 0, y: 0 });
   const [hoveredHotspot, setHoveredHotspot] = useState<string | null>(null);
 
-  // Determine active camera shot
+  // Determine active camera shot with dynamic shelf positioning
   const currentShot: CameraShot | null = React.useMemo(() => {
     if (!activeHotspotId || activeHotspotId === 'overview') {
       return null;
     }
+
+    if (activeHotspotId === 'rak_buku') {
+      if (selectedBook) {
+        let shelfTargetY = 1.75;
+        if (selectedBook.category === 'Bahasa Pemrograman Utama') {
+          shelfTargetY = 2.11; // Top shelf (Rak 1)
+        } else if (selectedBook.category === 'Frontend Framework & Tools') {
+          shelfTargetY = 1.51; // Shelf 2
+        } else if (selectedBook.category === 'Backend & Basis Data') {
+          shelfTargetY = 0.91; // Shelf 3
+        } else if (selectedBook.category === 'Administrasi & Data') {
+          shelfTargetY = 0.31; // Bottom shelf (Rak 4)
+        }
+
+        return {
+          pos: [2.45, shelfTargetY, -0.65],
+          target: [3.85, shelfTargetY, -2.5],
+          fov: 32,
+        };
+      }
+
+      // Default bookshelf view: angled slightly towards upper middle
+      return {
+        pos: [2.4, 1.85, -0.55],
+        target: [3.85, 1.75, -2.5],
+        fov: 36,
+      };
+    }
+
     const found = HOTSPOTS.find((h) => h.id === activeHotspotId);
     return found ? found.shot : null;
-  }, [activeHotspotId]);
+  }, [activeHotspotId, selectedBook]);
 
   const isOverview = !activeHotspotId || activeHotspotId === 'overview';
 
