@@ -28,11 +28,10 @@ export function RoomExperience() {
   >('none');
   const [previewDoc, setPreviewDoc] = useState<{ url: string; title: string } | null>(null);
 
-  // Inisialisasi otomatis sesuai waktu nyata (Malam: 18:00 - 05:59, Siang: 06:00 - 17:59)
-  const [isNightMode, setIsNightMode] = useState<boolean>(() => {
-    const hour = new Date().getHours();
-    return hour >= 18 || hour < 6;
-  });
+  // Mode Waktu: 'auto' (Siklus otomatis berganti siang & malam), 'day' (Siang), 'night' (Malam)
+  const [timeMode, setTimeMode] = useState<'auto' | 'day' | 'night'>('auto');
+  // Default Siang (false) agar pemandangan kompleks perumahan asri langsung cerah terlihat
+  const [isNightMode, setIsNightMode] = useState<boolean>(false);
   const [soundEnabled, setSoundEnabled] = useState<boolean>(false);
   const [morphProgress, setMorphProgress] = useState<number>(0);
   const [isMorphing, setIsMorphing] = useState<boolean>(false);
@@ -153,9 +152,34 @@ export function RoomExperience() {
     requestAnimationFrame(animate);
   };
 
+  // Auto-Cycle: Berganti otomatis Siang & Malam setiap 22 detik ketika mode 'auto' aktif
+  useEffect(() => {
+    if (timeMode !== 'auto') return;
+
+    const interval = setInterval(() => {
+      setIsNightMode((prev) => !prev);
+    }, 22000);
+
+    return () => clearInterval(interval);
+  }, [timeMode]);
+
+  const handleSetTimeMode = (mode: 'auto' | 'day' | 'night') => {
+    setTimeMode(mode);
+    soundSynth.playSwitchClick();
+    if (mode === 'day') {
+      setIsNightMode(false);
+    } else if (mode === 'night') {
+      setIsNightMode(true);
+    }
+  };
+
   const handleToggleLights = () => {
     soundSynth.playSwitchClick();
-    setIsNightMode((prev) => !prev);
+    setIsNightMode((prev) => {
+      const next = !prev;
+      setTimeMode(next ? 'night' : 'day');
+      return next;
+    });
   };
 
   const handleToggleSound = () => {
@@ -373,6 +397,54 @@ export function RoomExperience() {
 
         {/* Quick Room Controls */}
         <div className="pointer-events-auto flex items-center gap-2">
+          {/* Day / Night / Auto Cycle Segmented Pill */}
+          <div className="bg-cream/90 backdrop-blur-md border border-white/80 rounded-2xl p-1 shadow-clay-raised flex items-center gap-0.5">
+            <button
+              onClick={() => handleSetTimeMode('day')}
+              className={`px-2 py-1 rounded-xl text-[10px] font-sans font-bold flex items-center gap-1 transition-all cursor-pointer ${
+                !isNightMode && timeMode === 'day'
+                  ? 'bg-amber-clay text-ink-navy shadow-clay-subtle border border-white'
+                  : 'text-ink-soft hover:text-ink-navy'
+              }`}
+              title="Kunci Siang Hari (Pemandangan Perumahan Asri Cerah)"
+            >
+              <Sun size={12} className={!isNightMode ? 'text-amber-600' : ''} />
+              <span className="hidden sm:inline">Siang</span>
+            </button>
+
+            <button
+              onClick={() => handleSetTimeMode('night')}
+              className={`px-2 py-1 rounded-xl text-[10px] font-sans font-bold flex items-center gap-1 transition-all cursor-pointer ${
+                isNightMode && timeMode === 'night'
+                  ? 'bg-ink-navy text-cream shadow-clay-subtle border border-white/20'
+                  : 'text-ink-soft hover:text-ink-navy'
+              }`}
+              title="Kunci Malam Hari (Suasana Malam Tenang & Lampu Menyala)"
+            >
+              <Moon size={12} className={isNightMode ? 'text-indigo-300' : ''} />
+              <span className="hidden sm:inline">Malam</span>
+            </button>
+
+            <button
+              onClick={() => handleSetTimeMode('auto')}
+              className={`px-2 py-1 rounded-xl text-[10px] font-sans font-bold flex items-center gap-1 transition-all cursor-pointer ${
+                timeMode === 'auto'
+                  ? 'bg-deep-teal text-white shadow-clay-subtle border border-white/20'
+                  : 'text-ink-soft hover:text-ink-navy'
+              }`}
+              title="Siklus Otomatis: Berganti Siang & Malam bergantian secara otomatis"
+            >
+              <RefreshCw 
+                size={11} 
+                className={timeMode === 'auto' ? 'animate-spin' : ''} 
+                style={{ animationDuration: '6s' }} 
+              />
+              <span className="text-[9px] font-mono font-semibold">
+                Auto {timeMode === 'auto' ? (isNightMode ? '🌙' : '☀️') : ''}
+              </span>
+            </button>
+          </div>
+
           {/* Audio Toggle */}
           <button
             onClick={handleToggleSound}
@@ -778,26 +850,44 @@ export function RoomExperience() {
               )}
               {activeHotspotId === 'jendela' && (
                 <div className="flex flex-col gap-1.5 w-full">
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-1">
                     <button
-                      onClick={() => handleToggleLights()}
-                      className="flex-1 py-1 px-2 rounded-lg bg-cream border border-white text-ink-navy text-[9px] font-sans font-bold shadow-clay-btn hover:bg-white transition-all flex items-center justify-center gap-1 cursor-pointer"
+                      onClick={() => handleSetTimeMode(isNightMode ? 'day' : 'night')}
+                      className="flex-1 py-1 px-1.5 rounded-lg bg-cream border border-white text-ink-navy text-[9px] font-sans font-bold shadow-clay-btn hover:bg-white transition-all flex items-center justify-center gap-1 cursor-pointer"
+                      title={isNightMode ? 'Ubah ke Siang Hari' : 'Ubah ke Malam Hari'}
                     >
                       {isNightMode ? <Sun size={10} className="text-amber-500" /> : <Moon size={10} className="text-indigo-400" />}
                       <span>{isNightMode ? 'Siang' : 'Malam'}</span>
                     </button>
                     <button
+                      onClick={() => handleSetTimeMode('auto')}
+                      className={`py-1 px-1.5 rounded-lg border text-[9px] font-sans font-bold shadow-clay-btn transition-all flex items-center justify-center gap-1 cursor-pointer ${
+                        timeMode === 'auto'
+                          ? 'bg-deep-teal text-white border-white'
+                          : 'bg-cream text-ink-soft border-white hover:bg-white'
+                      }`}
+                      title="Nyalakan Siklus Otomatis Siang & Malam (22 detik)"
+                    >
+                      <RefreshCw size={9} className={timeMode === 'auto' ? 'animate-spin' : ''} />
+                      <span>Auto</span>
+                    </button>
+                    <button
                       onClick={() => handleSelectHotspot('overview')}
-                      className="py-1 px-2 rounded-lg bg-amber-clay text-ink-navy text-[9px] font-sans font-bold border border-white shadow-clay-btn hover:bg-amber-clay/90 transition-all flex items-center justify-center gap-1 cursor-pointer"
+                      className="py-1 px-1.5 rounded-lg bg-amber-clay text-ink-navy text-[9px] font-sans font-bold border border-white shadow-clay-btn hover:bg-amber-clay/90 transition-all flex items-center justify-center gap-0.5 cursor-pointer"
                       title="Zoom Out ke Kamar"
                     >
-                      <Minimize2 size={10} />
-                      <span>Zoom Out</span>
+                      <Minimize2 size={9} />
+                      <span>Keluar</span>
                     </button>
                   </div>
-                  <span className="text-[8px] text-ink-soft font-mono text-center">
-                    Klik gorden di 3D untuk buka / tutup
-                  </span>
+                  <div className="flex items-center justify-between text-[8px] text-ink-soft font-mono px-0.5">
+                    <span className="font-semibold text-deep-teal">
+                      {timeMode === 'auto' 
+                        ? `🔄 Auto: ${isNightMode ? 'Malam 🌙' : 'Siang ☀️'}` 
+                        : (isNightMode ? '🌙 Mode Malam' : '☀️ Mode Siang')}
+                    </span>
+                    <span>Klik gorden (3D)</span>
+                  </div>
                 </div>
               )}
               {activeHotspotId === 'overview' && (

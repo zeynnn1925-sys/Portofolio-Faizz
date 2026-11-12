@@ -14,6 +14,7 @@ export function drawWindowView(
 ) {
   t = t || 0;
   x.setTransform(1, 0, 0, 1, 0, 0);
+  x.clearRect(0, 0, W, H);
   x.globalAlpha = 1;
   const n = 1 - v;
   const S = (k: number) => Math.abs(Math.sin(k * 12.9898) * 43758.5453) % 1;

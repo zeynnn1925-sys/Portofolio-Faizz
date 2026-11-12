@@ -34,10 +34,11 @@ export function Decorations({
   // Dynamic Animated Neighborhood Window Texture (drawWindowView)
   const windowCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const windowTextureRef = useRef<THREE.CanvasTexture | null>(null);
+  const windowMaterialRef = useRef<THREE.MeshBasicMaterial | null>(null);
   const lastWindowRenderTime = useRef<number>(0);
   const currentV = useRef<number>(isNightMode ? 0 : 1);
 
-  const windowCanvasTexture = useMemo(() => {
+  const [windowCanvasTexture] = useState(() => {
     const canvas = document.createElement('canvas');
     canvas.width = 512;
     canvas.height = 560;
@@ -56,18 +57,12 @@ export function Decorations({
     texture.needsUpdate = true;
     windowTextureRef.current = texture;
     return texture;
-  }, []);
+  });
 
   useEffect(() => {
-    currentV.current = isNightMode ? 0 : 1;
-    if (windowCanvasRef.current) {
-      const ctx = windowCanvasRef.current.getContext('2d');
-      if (ctx) {
-        drawWindowView(ctx, 512, 560, isNightMode ? 0 : 1, 0);
-        if (windowTextureRef.current) {
-          windowTextureRef.current.needsUpdate = true;
-        }
-      }
+    // Biarkan useFrame melakukan interpolasi halus (smooth lerp) dari currentV ke targetV
+    if (windowMaterialRef.current) {
+      windowMaterialRef.current.needsUpdate = true;
     }
   }, [isNightMode]);
 
@@ -205,9 +200,14 @@ export function Decorations({
         }}
       >
         {/* Outer View: Dynamic Animated Neighborhood Canvas Texture ("Perumahan yang Asri") */}
-        <mesh position={[0, 0, 0.012]} renderOrder={2}>
+        <mesh position={[0, 0, 0.015]} renderOrder={2}>
           <planeGeometry args={[1.36, 1.66]} />
-          <meshBasicMaterial map={windowCanvasTexture} toneMapped={false} side={THREE.DoubleSide} />
+          <meshBasicMaterial
+            ref={windowMaterialRef}
+            map={windowCanvasTexture}
+            toneMapped={false}
+            side={THREE.DoubleSide}
+          />
         </mesh>
 
         {/* Window Wooden Frame (Hollow 4-piece border surrounding the canvas) */}
@@ -262,7 +262,7 @@ export function Decorations({
           }}
         >
           {/* Left Curtain */}
-          <group ref={leftCurtainRef} position={[-0.72, 0, 0.08]}>
+          <group ref={leftCurtainRef} position={[-0.72, 0, 0.08]} scale={[0.28, 1, 1]}>
             <mesh castShadow>
               <boxGeometry args={[1, 1.9, 0.1]} />
               <meshStandardMaterial color="#2F5D5A" roughness={0.8} />
@@ -270,7 +270,7 @@ export function Decorations({
           </group>
 
           {/* Right Curtain */}
-          <group ref={rightCurtainRef} position={[0.72, 0, 0.08]}>
+          <group ref={rightCurtainRef} position={[0.72, 0, 0.08]} scale={[0.28, 1, 1]}>
             <mesh castShadow>
               <boxGeometry args={[1, 1.9, 0.1]} />
               <meshStandardMaterial color="#2F5D5A" roughness={0.8} />
